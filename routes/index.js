@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var User = require('../models/user');
 const bcrypt = require("bcrypt");
-
+const jwt = require("jsonwebtoken");
 
 function successResponse(message) {
 	return {
@@ -20,15 +20,21 @@ function failedResponse(message) {
 	}
 }
 
-function profileResponse(message, statusCode, dataJson) {
-	return [
-		{
-			"status": statusCode,
-			"connection": "Connected",
-			"message": message
-		},
-		dataJson
-	]
+function profileResponse(message, statusCode, data) {
+	return {
+		"status": statusCode,
+		"connection": "Connected",
+		"message": message,
+		"userData": {
+			"user_id": data.unique_id,
+			"username": data.username,
+			"email": data.email,
+			"dateOfBirth": data.dateOfBirth,
+			"mobileNumber": data.mobileNumber
+		}
+	}
+
+
 }
 
 //To check the connection connected or not
@@ -72,6 +78,8 @@ router.post('/register', async function (req, res, next) {
 							unique_id: id,
 							email: value.email,
 							username: value.username,
+							dateOfBirth: value.dateOfBirth,
+							mobileNumber: value.mobileNumber,
 							password: password,
 							passwordConf: value.passwordConf
 						});
@@ -81,12 +89,13 @@ router.post('/register', async function (req, res, next) {
 								console.log(err);
 							else
 								console.log('Success');
+							res.send(successResponse('Registered Successfully.'));
 						});
 
 					}).sort({ _id: -1 }).limit(1);
-					res.send(successResponse('Success'));
+
 				} else {
-					res.send(failedResponse('Email is already used'));
+					res.send(failedResponse('Email is already registered'));
 				}
 
 			});
@@ -98,12 +107,12 @@ router.post('/register', async function (req, res, next) {
 
 
 //Login connection check
-router.get('/login', function (req, res, next) {
-	// return res.render('login.ejs');
-	return res.json(successResponse("Success"))
-},
-	e => res.json(failedResponse(e))
-);
+// router.get('/login', function (req, res, next) {
+// 	// return res.render('login.ejs');
+// 	return res.json(successResponse("Success"))
+// },
+// 	e => res.json(failedResponse(e))
+// );
 
 //Login user
 router.post('/login', async function (req, res, next) {
@@ -120,10 +129,24 @@ router.post('/login', async function (req, res, next) {
 				const validPassword = await bcrypt.compare(value.password, data.password);
 
 				if (validPassword) {
-					//console.log("Done Login");
+
 					req.session.userId = data.unique_id;
 					//console.log(req.session.userId);
-					res.send(successResponse('Success'));
+
+					var data = {
+						"status": 200,
+						"connection": "Connected",
+						"message": "Login success",
+						"userData": {
+							"user_id": data.unique_id,
+							"username": data.username,
+							"email": data.email,
+							"dateOfBirth": data.dateOfBirth,
+							"mobileNumber": data.mobileNumber
+						}
+					}
+					// res.send(profileResponse('Login Success', 200, data));
+					res.send(data);
 				} else {
 					res.send(failedResponse('Wrong password!'));
 				}
@@ -135,33 +158,51 @@ router.post('/login', async function (req, res, next) {
 
 });
 
-
 //Watch your profile
-router.get('/profile', function (req, res, next) {
-	console.log("profile");
-	User.findOne({ unique_id: req.session.userId }, function (err, data) {
-		console.log("data");
-		console.log(data);
+router.post('/profile', function (req, res, next) {
+
+	var session = {
+		"cookie": {
+			path: '/', _expires: null,
+			originalMaxAge: null,
+			httpOnly: true
+		},
+		userId: req.body.user_id
+	}
+
+	User.findOne({ unique_id: session.userId }, function (err, data) {
+
 		if (!data) {
 			// res.redirect('/');
-			res.send(failedResponse('Session expired!'))
+			res.send(failedResponse('Data not found!'))
 		} else {
 			//console.log("found");
 			// return res.render('data.ejs', { "name": data.username, "email": data.email });
-			var dataJson = {
-				"username": data.username, "email": data.email
-			}
-			res.send(profileResponse('Success', 200, dataJson))
-
+			// var dataJson = {
+			// 	"username": data.username,
+			// 	"email": data.email,
+			// 	"dateOfBirth": data.dateOfBirth,
+			// 	"mobileNumber": data.mobileNumber
+			// }
+			res.send(profileResponse('Success', 200, data))
 
 		}
 	});
 });
 
-
 //Logout the user
-router.get('/logout', function (req, res, next) {
-	console.log("logout")
+router.post('/logout', function (req, res, next) {
+
+	var session = {
+		"cookie": {
+			path: '/', _expires: null,
+			originalMaxAge: null,
+			httpOnly: true
+		},
+		userId: req.user_id
+	}
+	console.log(session)
+
 	if (req.session) {
 		// delete session object
 		req.session.destroy(function (err) {
@@ -174,13 +215,13 @@ router.get('/logout', function (req, res, next) {
 	}
 });
 
+//Forgot password
+// router.get('/forgetpass', function (req, res, next) {
+// 	res.render("forget.ejs");
+// });
 
-router.get('/forgetpass', function (req, res, next) {
-	res.render("forget.ejs");
-});
 
-
-//Forgotpassword
+//Forgot password
 router.post('/forgetpass', function (req, res, next) {
 
 	var value = req.body;
@@ -216,6 +257,46 @@ router.post('/forgetpass', function (req, res, next) {
 			}
 		});
 	}
+});
+
+//Update profile
+router.post('/update', async function (req, res, next) {
+
+	var session = {
+		"cookie": {
+			path: '/', _expires: null,
+			originalMaxAge: null,
+			httpOnly: true
+		},
+		userId: req.body.user_id
+	}
+
+	console.log(session.userId);
+
+	User.findOne({ unique_id: session.userId }, function (err, data) {
+		// console.log("data");
+		if (!data) {
+			res.send(failedResponse('Session expired!'))
+		} else {
+
+			data.username = req.body.username;
+			data.dateOfBirth = req.body.dateOfBirth;
+			data.mobileNumber = req.body.mobileNumber;
+
+			data.save(function (err, Person) {
+				if (err) {
+					console.log(err);
+					res.send(failedResponse(err))
+				}
+				else {
+					console.log('Update successs');
+					res.send(successResponse('Profile updated!'));
+				}
+			})
+		}
+
+	});
+
 });
 
 module.exports = router;
