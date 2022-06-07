@@ -37,14 +37,6 @@ function profileResponse(message, statusCode, data) {
 
 }
 
-//To check the connection connected or not
-router.get('/', function (req, res, next) {
-	// return res.render('index.ejs');
-	return res.json(successResponse("Success"))
-},
-	e => res.json(failedResponse(e))
-);
-
 //to register the user
 router.post('/register', async function (req, res, next) {
 
@@ -104,15 +96,6 @@ router.post('/register', async function (req, res, next) {
 		}
 	}
 });
-
-
-//Login connection check
-// router.get('/login', function (req, res, next) {
-// 	// return res.render('login.ejs');
-// 	return res.json(successResponse("Success"))
-// },
-// 	e => res.json(failedResponse(e))
-// );
 
 //Login user
 router.post('/login', async function (req, res, next) {
@@ -216,12 +199,6 @@ router.post('/logout', function (req, res, next) {
 });
 
 //Forgot password
-// router.get('/forgetpass', function (req, res, next) {
-// 	res.render("forget.ejs");
-// });
-
-
-//Forgot password
 router.post('/forgetpass', function (req, res, next) {
 
 	var value = req.body;
@@ -300,3 +277,25 @@ router.post('/update', async function (req, res, next) {
 });
 
 module.exports = router;
+
+
+//To check the connection connected or not
+// router.get('/', function (req, res, next) {
+// 	// return res.render('index.ejs');
+// 	return res.json(successResponse("Success"))
+// },
+// 	e => res.json(failedResponse(e))
+// );
+
+//Forgot password
+// router.get('/forgetpass', function (req, res, next) {
+// 	res.render("forget.ejs");
+// });
+
+//Login connection check
+// router.get('/login', function (req, res, next) {
+// 	// return res.render('login.ejs');
+// 	return res.json(successResponse("Success"))
+// },
+// 	e => res.json(failedResponse(e))
+// );
