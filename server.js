@@ -1,7 +1,5 @@
 var express = require('express');
 var env = require('dotenv').config()
-var ejs = require('ejs');
-var path = require('path');
 var app = express();
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
@@ -23,6 +21,7 @@ var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
 });
+db.close
 
 app.use(session({
   secret: 'work hard',

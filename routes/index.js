@@ -186,9 +186,9 @@ router.post('/logout', function (req, res, next) {
 	}
 	console.log(session)
 
-	if (req.session) {
+	if (session) {
 		// delete session object
-		req.session.destroy(function (err) {
+		session.destroy(function (err) {
 			if (err) {
 				return res.send(failedResponse("Logout failed!"))
 
