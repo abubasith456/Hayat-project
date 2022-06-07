@@ -197,7 +197,6 @@ router.post('/logout', function (req, res, next) {
 
 			}
 		});
-		console.log(req.cookies._id);
 		req.destroy;
 
 	}
