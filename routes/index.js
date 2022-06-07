@@ -190,9 +190,10 @@ router.post('/logout', function (req, res, next) {
 		// delete session object
 		req.session.destroy(function (err) {
 			if (err) {
-				return next(err);
+				return res.send(failedResponse("Logout failed!"))
+
 			} else {
-				return res.redirect('/');
+				return res.send(successResponse('Logout success'));
 			}
 		});
 	}
