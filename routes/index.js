@@ -186,9 +186,9 @@ router.post('/logout', function (req, res, next) {
 	}
 	console.log(session)
 
-	if (session) {
+	if (req.session) {
 		// delete session object
-		session.destroy(function (err) {
+		req.session.destroy(function (err) {
 			if (err) {
 				return res.send(failedResponse("Logout failed!"))
 
@@ -196,6 +196,8 @@ router.post('/logout', function (req, res, next) {
 				return res.send(successResponse('Logout success'));
 			}
 		});
+
+		req._destroy;
 	}
 });
 
