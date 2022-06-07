@@ -193,11 +193,11 @@ router.post('/logout', function (req, res, next) {
 				return res.send(failedResponse("Logout failed!"))
 
 			} else {
-				return res.send(successResponse('Logout success')),
-					console.log(req.cookies._id);
+				return res.send(successResponse('Logout success'));
+
 			}
 		});
-
+		console.log(req.cookies._id);
 		req.destroy;
 
 	}
