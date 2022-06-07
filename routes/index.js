@@ -182,7 +182,7 @@ router.post('/logout', function (req, res, next) {
 			originalMaxAge: null,
 			httpOnly: true
 		},
-		userId: req.user_id
+		userId: req.body.user_id
 	}
 	console.log(session)
 
