@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var app = express();
 var User = require('../models/user');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -197,8 +198,7 @@ router.post('/logout', function (req, res, next) {
 
 			}
 		});
-		req.destroy;
-
+		req.session.destroy;
 	}
 });
 
