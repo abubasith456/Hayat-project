@@ -23,14 +23,14 @@ db.once('open', function () {
 });
 db.close
 
-app.use(session({
-  secret: 'work hard',
-  resave: true,
-  saveUninitialized: false,
-  store: new MongoStore({
-    mongooseConnection: db
-  })
-}));
+// app.use(session({
+//   secret: 'work hard',
+//   resave: true,
+//   saveUninitialized: false,
+//   store: new MongoStore({
+//     mongooseConnection: db
+//   })
+// }));
 
 // app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'ejs');
