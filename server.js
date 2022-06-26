@@ -32,7 +32,6 @@ app.use(session({
   // })
 }));
 // app.use(new MongoStore({ mongooseConnection: db }));
-
 // app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'ejs');
 
