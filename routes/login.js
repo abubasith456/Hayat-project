@@ -57,7 +57,7 @@ router.post('/', function (req, res, next) {
                     // res.send(profileResponse('Login Success', 200, data));
                     res.send(data);
                 } else {
-                    res.send(responseModel('Wrong password!'));
+                    res.send(successResponse('Wrong password!'));
                 }
             } else {
                 res.send(failedResponse('This Email Is not regestered!'));
