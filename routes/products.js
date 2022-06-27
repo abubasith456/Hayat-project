@@ -8,7 +8,7 @@ const Product = require("../models/product");
 //Disk storage where image store
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './uploads/');
+        cb(null, './uploads');
     },
     filename: function (req, file, cb) {
         cb(null, new Date().toISOString() + file.originalname);
@@ -60,7 +60,7 @@ router.post("/", upload.single('productImage'), (req, res, next) => {
             });
         })
         .catch(err => {
-            console.log(err);
+            console.log(err.message);
             res.status(500).json({
                 error: err
             });

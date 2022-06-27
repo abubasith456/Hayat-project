@@ -5,40 +5,6 @@ var User = require('../models/user');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-
-// //Watch your profile
-// router.get('/profile', function (req, res, next) {
-
-//     var session = {
-//         "cookie": {
-//             path: '/', _expires: null,
-//             originalMaxAge: null,
-//             httpOnly: true
-//         },
-//         userId: req.body.user_id
-//     }
-
-//     User.findOne({ unique_id: session.userId }, function (err, data) {
-
-//         if (!data) {
-//             // res.redirect('/');
-//             res.send(failedResponse('Data not found!'))
-//         } else {
-//             //console.log("found");
-//             // return res.render('data.ejs', { "name": data.username, "email": data.email });
-//             // var dataJson = {
-//             // 	"username": data.username,
-//             // 	"email": data.email,
-//             // 	"dateOfBirth": data.dateOfBirth,
-//             // 	"mobileNumber": data.mobileNumber
-//             // }
-//             res.send(profileResponse('Success', 200, data))
-
-//         }
-//     });
-// });
-
-
 function successResponse(message) {
     return {
         "status": 200,

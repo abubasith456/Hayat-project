@@ -1,11 +1,10 @@
 var express = require('express');
 var router = express.Router();
 var app = express();
-var User = require('./models/user');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const morgan = require('morgan');
+
 
 
 //Routes
@@ -31,13 +30,13 @@ mongoose.Promise = global.Promise;
 
 
 //Setting the requestParse
-// app.use(morgan("dev"));
+app.use(morgan("dev"));
 app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
-//IDK why we use this
+//IDK why we use this and i think this is Header what required....
 app.use((req, res, next) => {
 	res.header("Access-Control-Allow-Origin", "*");
 	res.header(
@@ -59,13 +58,14 @@ app.use("/profileUpdate", profileUpdate);
 app.use("/products", productRoutes);
 
 
-
+//Error catch
 app.use((req, res, next) => {
 	const error = new Error("Not found");
 	error.status = 404;
 	next(error);
 });
 
+//Some other error show
 app.use((error, req, res, next) => {
 	res.status(error.status || 500);
 	res.json({
