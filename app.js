@@ -11,8 +11,11 @@ const morgan = require('morgan');
 const login = require("./routes/login");
 const register = require("./routes/register");
 const profile = require("./routes/profile");
-const productRoutes = require("./routes/products");
 const profileUpdate = require("./routes/profileUpdate");
+const productRoutes = require("./routes/products");
+const orderRoutes = require("./routes/orders");
+const category = require("./routes/category");
+
 
 //Mongoes Db
 mongoose.connect('mongodb+srv://basith:basith@cluster0.fhejr.mongodb.net/RegisterLogin?retryWrites=true&w=majority', {
@@ -56,6 +59,8 @@ app.use("/register", register);
 app.use("/profile", profile);
 app.use("/profileUpdate", profileUpdate);
 app.use("/products", productRoutes);
+app.use("/category", category);
+app.use("/orders", orderRoutes);
 
 
 //Error catch

@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require('multer');
 const Product = require("../models/product");
+const { Category } = require("../models/category");
 
 
 //Disk storage where image store
@@ -35,12 +36,21 @@ const upload = multer({
 });
 
 //Add products
-router.post("/", upload.single('productImage'), (req, res, next) => {
-    const product = new Product({
-        _id: new mongoose.Types.ObjectId(),
+router.post("/", upload.single('productImage'), async (req, res, next) => {
+
+    const category = await Category.findById(req.body.category);
+    console.log(category);
+    if (!category) return res.status(400).send("Invalid Category");
+
+    console.log(req.body)
+    const product = Product({
+        _id: mongoose.Types.ObjectId(),
         name: req.body.name,
         price: req.body.price,
-        productImage: req.file.path
+        description: req.body.description,
+        category: req.body.category,
+        productImage: req.file.path,
+        rating: req.body.rating,
     });
     product
         .save()
@@ -51,6 +61,9 @@ router.post("/", upload.single('productImage'), (req, res, next) => {
                 createdProduct: {
                     name: result.name,
                     price: result.price,
+                    description: result.description,
+                    category: result.Category,
+                    rating: result.rating,
                     _id: result._id,
                     request: {
                         type: 'GET',
@@ -70,7 +83,7 @@ router.post("/", upload.single('productImage'), (req, res, next) => {
 //Get products
 router.get("/", (req, res, next) => {
     Product.find()
-        .select("name price _id productImage")
+        .select("name price description category _id productImage")
         .exec()
         .then(docs => {
             const response = {
@@ -79,6 +92,8 @@ router.get("/", (req, res, next) => {
                     return {
                         name: doc.name,
                         price: doc.price,
+                        description: doc.description,
+                        category: doc.category,
                         productImage: doc.productImage,
                         _id: doc._id,
                         request: {
@@ -105,36 +120,93 @@ router.get("/", (req, res, next) => {
 });
 
 //Update products
-router.patch("/:productId", (req, res, next) => {
-    const id = req.params.productId;
+router.put('/:id', async (req, res) => {
+    const id = req.params.id;
+    console.log(req.body);
     const updateOps = {};
-    for (const ops of req.body) {
+    for (const ops of Object.keys(req.body)) {
         updateOps[ops.propName] = ops.value;
     }
-    Product.update({ _id: id }, { $set: updateOps })
-        .exec()
-        .then(result => {
-            res.status(200).json({
-                message: 'Product updated',
-                request: {
-                    type: 'GET',
-                    url: 'http://localhost:4000/products/' + id
-                }
-            });
-        })
-        .catch(err => {
+
+    // const product = new Product({
+    //     _id: new mongoose.Types.ObjectId(),
+    //     name: req.body.name,
+    //     price: req.body.price,
+    //     description: req.body.description,
+    //     category: req.body.category,
+    //     productImage: req.file.path,
+    //     rating: req.body.rating,
+    // });
+
+    Product.findOne({ _id: id }, function (err, data) {
+        if (!data) {
             console.log(err);
             res.status(500).json({
                 error: err
             });
-        });
+        } else {
+            if (req.body.name != "") {
+                data.name = req.body.name
+            }
+            if (req.body.price != "") {
+                data.price = req.body.price
+            }
+            if (req.body.description != "") {
+                data.description = req.body.description
+            }
+            if (req.body.category != "") {
+                data.category = req.body.category
+            }
+            if (req.body.productImage != "") {
+                data.productImage = req.body.productImage
+            }
+            if (req.body.rating != "") {
+                data.rating = req.body.rating
+            }
+
+            data.save(function (err, Person) {
+                if (err) {
+                    console.log(err);
+                    res.status(500).json({
+                        error: err
+                    });
+                } else {
+                    res.status(200).json({
+                        message: 'Product updated',
+                        request: {
+                            type: 'GET',
+                            url: 'http://localhost:4000/products/' + id
+                        }
+                    });
+                }
+            });
+        }
+    });
+
+    // Product.updateOne({ _id: id }, { $set: updateOps })
+    //     .exec()
+    //     .then(result => {
+    //         res.status(200).json({
+    //             message: 'Product updated',
+    //             request: {
+    //                 type: 'GET',
+    //                 url: 'http://localhost:4000/products/' + id
+    //             }
+    //         });
+    //     })
+    //     .catch(err => {
+    //         console.log(err);
+    //         res.status(500).json({
+    //             error: err
+    //         });
+    //     });
 });
 
 
 //Delete products
-router.delete("/:productId", (req, res, next) => {
-    const id = req.params.productId;
-    Product.remove({ _id: id })
+router.delete("/:id", (req, res) => {
+    const id = req.params.id;
+    Product.deleteOne({ _id: id })
         .exec()
         .then(result => {
             res.status(200).json({
@@ -155,3 +227,38 @@ router.delete("/:productId", (req, res, next) => {
 });
 
 module.exports = router;
+
+
+    // Product.findOne({ _id: req.body.productId }, (err, data) => {
+
+    //     if (!data) {
+    //         res.status(500).json({
+    //             err: 'Data not found'
+    //         });
+    //     } else {
+    //         data.Product = req.body.Product;
+    //         data.price = req.body.price;
+
+    //         data.save(function (err, Person) {
+    //             if (err) {
+    //                 res.status(500).json({
+    //                     err: err
+    //                 })
+    //             } else {
+    //                 res.status(200).json({
+    //                     message: 'Product updated',
+    //                     request: {
+    //                         trype: 'GET',
+    //                         url: 'http://localhost:4000/products/' + data._id
+    //                     }
+    //                 })
+    //             }
+    //         });
+
+    //     }
+    // }).catch(err => {
+    //     console.log(err);
+    //     res.status(500).json({
+    //         error: err
+    //     });
+    // });
