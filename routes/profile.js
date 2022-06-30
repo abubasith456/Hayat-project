@@ -38,13 +38,14 @@ function profileResponse(message, statusCode, data) {
 
 
 // //Watch your profile
-router.get('/', function (req, res, next) {
+router.post('/', function (req, res, next) {
 
     User.findOne({ unique_id: req.body.userId }, function (err, data) {
 
         if (!data) {
             res.send(failedResponse('Data not found!'))
         } else {
+
             res.send(profileResponse('Success', 200, data))
 
         }
