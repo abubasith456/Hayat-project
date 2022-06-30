@@ -22,6 +22,22 @@ function failedResponse(message) {
 }
 
 
+function registerSccess(message, statusCode, data) {
+    return {
+        "status": statusCode,
+        "connection": "Connected",
+        "message": message,
+        "userData": {
+            "user_id": data.unique_id,
+            "username": data.username,
+            "email": data.email,
+            "dateOfBirth": data.dateOfBirth,
+            "mobileNumber": data.mobileNumber
+        }
+    }
+}
+
+
 //Register user
 router.post('/', async function (req, res, next) {
 
@@ -66,7 +82,7 @@ router.post('/', async function (req, res, next) {
                                 console.log(err);
                             else
                                 console.log('Success');
-                            res.send(successResponse('Registered Successfully.'));
+                            res.send(registerSccess("Registered Successfully.", 200, newPerson));
                         });
 
                     }).sort({ _id: -1 }).limit(1);
