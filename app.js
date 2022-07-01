@@ -15,6 +15,7 @@ const profileUpdate = require("./routes/profileUpdate");
 const productRoutes = require("./routes/products");
 const orderRoutes = require("./routes/orders");
 const category = require("./routes/category");
+const vegetables = require("./routes/vegetables");
 
 
 //Mongoes Db
@@ -61,6 +62,7 @@ app.use("/profileUpdate", profileUpdate);
 app.use("/products", productRoutes);
 app.use("/category", category);
 app.use("/orders", orderRoutes);
+app.use("/vegetables", vegetables);
 
 
 //Error catch
