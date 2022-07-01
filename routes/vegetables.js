@@ -88,7 +88,7 @@ router.get("/", (req, res, next) => {
                         name: doc.name,
                         price: doc.price,
                         description: doc.description,
-                        vegetableImage: doc.productImage,
+                        vegetableImage: doc.vegetableImage,
                         _id: doc._id,
                         request: {
                             type: "GET",
