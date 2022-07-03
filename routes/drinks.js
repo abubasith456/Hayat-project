@@ -83,7 +83,7 @@ router.get("/", (req, res, next) => {
         .then(docs => {
             const response = {
                 count: docs.length,
-                drinksroduct: docs.map(doc => {
+                drinksProduct: docs.map(doc => {
                     return {
                         name: doc.name,
                         price: doc.price,
