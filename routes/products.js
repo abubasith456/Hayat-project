@@ -9,7 +9,7 @@ const { Category } = require("../models/category");
 //Disk storage where image store
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './uploads');
+        cb(null, './uploads/products');
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname);
@@ -38,17 +38,12 @@ const upload = multer({
 //Add products
 router.post("/", upload.single('productImage'), async (req, res, next) => {
 
-    const category = await Category.findById(req.body.category);
-    console.log(category);
-    if (!category) return res.status(400).send("Invalid Category");
-
     console.log(req.body)
     const product = Product({
         _id: mongoose.Types.ObjectId(),
         name: req.body.name,
         price: req.body.price,
         description: req.body.description,
-        category: req.body.category,
         productImage: req.file.path,
         rating: req.body.rating,
     });
@@ -62,7 +57,6 @@ router.post("/", upload.single('productImage'), async (req, res, next) => {
                     name: result.name,
                     price: result.price,
                     description: result.description,
-                    category: result.Category,
                     rating: result.rating,
                     _id: result._id,
                     request: {
@@ -93,7 +87,6 @@ router.get("/", (req, res, next) => {
                         name: doc.name,
                         price: doc.price,
                         description: doc.description,
-                        category: doc.category,
                         productImage: doc.productImage,
                         _id: doc._id,
                         request: {
@@ -153,9 +146,6 @@ router.put('/:id', async (req, res) => {
             }
             if (req.body.description != "") {
                 data.description = req.body.description
-            }
-            if (req.body.category != "") {
-                data.category = req.body.category
             }
             if (req.body.productImage != "") {
                 data.productImage = req.body.productImage
