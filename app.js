@@ -17,6 +17,10 @@ const orderRoutes = require("./routes/orders");
 const category = require("./routes/category");
 const vegetables = require("./routes/vegetables");
 
+const grocery = require("./routes/grocery");
+const drinks = require("./routes/drinks");
+const fruites = require("./routes/fruites");
+const dairy = require("./routes/dairy");
 
 //Mongoes Db
 mongoose.connect('mongodb+srv://basith:basith@cluster0.fhejr.mongodb.net/RegisterLogin?retryWrites=true&w=majority', {
@@ -63,6 +67,10 @@ app.use("/products", productRoutes);
 app.use("/category", category);
 app.use("/orders", orderRoutes);
 app.use("/vegetables", vegetables);
+app.use("/grocery", grocery);
+app.use("/fruites", fruites);
+app.use("/drinks", drinks);
+app.use("/dairy", dairy);
 
 
 //Error catch
