@@ -90,7 +90,7 @@ router.get("/", (req, res, next) => {
                         productName: doc.name,
                         productPrice: doc.price,
                         productDescription: doc.description,
-                        productDairyImage: doc.dairyImage,
+                        productImage: doc.dairyImage,
                         productisLiked: doc.isLiked,
                         _id: doc._id,
                         request: {
