@@ -48,7 +48,7 @@ router.post("/", upload.single('dairyImage'), async (req, res, next) => {
         isLiked: req.body.isLiked,
 
     });
-    vegetable
+    dairy
         .save()
         .then(result => {
             console.log(result);
