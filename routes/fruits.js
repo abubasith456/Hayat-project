@@ -78,7 +78,7 @@ router.post("/", upload.single('fruitImage'), async (req, res, next) => {
 //Get products
 router.get("/", (req, res, next) => {
     Fruites.find()
-        .select("name price description _id fruitImage")
+        .select("name price description _id fruiteImage")
         .exec()
         .then(docs => {
             const response = {
@@ -88,7 +88,7 @@ router.get("/", (req, res, next) => {
                         name: doc.name,
                         price: doc.price,
                         description: doc.description,
-                        fruitImage: doc.fruitImage,
+                        fruitImage: doc.fruiteImage,
                         _id: doc._id,
                         request: {
                             type: "GET",
