@@ -2,12 +2,12 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require('multer');
-const Fruites = require("../models/fruites");
+const Fruites = require("../models/fruits");
 
 //Disk storage where image store
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './uploads/fruites');
+        cb(null, './uploads/fruits');
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname);
@@ -33,7 +33,7 @@ const upload = multer({
 });
 
 //Add products
-router.post("/", upload.single('fruiteImage'), async (req, res, next) => {
+router.post("/", upload.single('fruitImage'), async (req, res, next) => {
     // const category = await Category.findById(req.body.category);
     // console.log(category);
     // if (!category) return res.status(400).send("Invalid Category");
@@ -57,7 +57,7 @@ router.post("/", upload.single('fruiteImage'), async (req, res, next) => {
                     name: result.name,
                     price: result.price,
                     description: result.description,
-                    fruiteImage: result.fruiteImage,
+                    fruitImage: result.fruitImage,
                     _id: result._id,
                     request: {
                         type: 'GET',
@@ -78,17 +78,17 @@ router.post("/", upload.single('fruiteImage'), async (req, res, next) => {
 //Get products
 router.get("/", (req, res, next) => {
     Fruites.find()
-        .select("name price description _id fruiteImage")
+        .select("name price description _id fruitImage")
         .exec()
         .then(docs => {
             const response = {
                 count: docs.length,
-                products: docs.map(doc => {
+                fruitproduct: docs.map(doc => {
                     return {
                         name: doc.name,
                         price: doc.price,
                         description: doc.description,
-                        fruiteImage: doc.fruiteImage,
+                        fruitImage: doc.fruitImage,
                         _id: doc._id,
                         request: {
                             type: "GET",
@@ -114,7 +114,7 @@ router.get("/", (req, res, next) => {
 });
 
 //Update products
-router.put('/:id', upload.single('fruiteImage'), async (req, res) => {
+router.put('/:id', upload.single('fruitImage'), async (req, res) => {
     const id = req.params.id;
     console.log(req.body);
     const updateOps = {};
@@ -122,7 +122,7 @@ router.put('/:id', upload.single('fruiteImage'), async (req, res) => {
         updateOps[ops] = req.body[ops];
     }
 
-    console.log(updateOps);
+    // console.log(updateOps);
     // function jsonParser(stringValue) {
     //     var string = JSON.stringify(stringValue);
     //     var objectValue = JSON.parse(string);

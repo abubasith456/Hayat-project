@@ -16,10 +16,9 @@ const productRoutes = require("./routes/products");
 const orderRoutes = require("./routes/orders");
 const category = require("./routes/category");
 const vegetables = require("./routes/vegetables");
-
 const grocery = require("./routes/grocery");
 const drinks = require("./routes/drinks");
-const fruites = require("./routes/fruites");
+const fruites = require("./routes/fruits");
 const dairy = require("./routes/dairy");
 
 //Mongoes Db
@@ -68,7 +67,7 @@ app.use("/category", category);
 app.use("/orders", orderRoutes);
 app.use("/vegetables", vegetables);
 app.use("/grocery", grocery);
-app.use("/fruites", fruites);
+app.use("/fruits", fruites);
 app.use("/drinks", drinks);
 app.use("/dairy", dairy);
 
