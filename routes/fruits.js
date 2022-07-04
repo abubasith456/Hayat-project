@@ -91,7 +91,7 @@ router.get("/", (req, res, next) => {
                         productPrice: doc.price,
                         productDescription: doc.description,
                         productImage: doc.fruiteImage,
-                        ProductisLiked: doc.isLiked,
+                        productisLiked: doc.isLiked,
                         _id: doc._id,
                         request: {
                             type: "GET",
