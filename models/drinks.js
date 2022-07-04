@@ -14,6 +14,10 @@ const drinksScheme = mongoose.Schema({
     drinksImage: {
         type: String,
     },
+    isLiked: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 module.exports = mongoose.model('Drinks', drinksScheme);

@@ -14,6 +14,10 @@ const diaryScheme = mongoose.Schema({
     dairyImage: {
         type: String,
     },
+    isLiked: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 module.exports = mongoose.model('Diary', diaryScheme);

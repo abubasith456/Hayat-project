@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
 
 const vegetablesSchema = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
@@ -15,6 +14,10 @@ const vegetablesSchema = mongoose.Schema({
     vegetableImage: {
         type: String,
     },
+    isLiked: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 module.exports = mongoose.model('Vegetables', vegetablesSchema);

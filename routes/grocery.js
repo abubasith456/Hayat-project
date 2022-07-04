@@ -45,6 +45,7 @@ router.post("/", upload.single('groceryImage'), async (req, res, next) => {
         price: req.body.price,
         description: req.body.description,
         groceryImage: req.file.path,
+        isLiked: req.body.isLiked,
 
     });
     grocery
@@ -53,11 +54,12 @@ router.post("/", upload.single('groceryImage'), async (req, res, next) => {
             console.log(result);
             res.status(201).json({
                 message: "Product Created successfully",
-                createdProduct: {
-                    name: result.name,
-                    price: result.price,
-                    description: result.description,
-                    groceryImage: result.groceryImage,
+                product: {
+                    productName: result.name,
+                    productPrice: result.price,
+                    productDescription: result.description,
+                    productImage: result.groceryImage,
+                    productisLiked: result.isLiked,
                     _id: result._id,
                     request: {
                         type: 'GET',
@@ -78,17 +80,18 @@ router.post("/", upload.single('groceryImage'), async (req, res, next) => {
 //Get products
 router.get("/", (req, res, next) => {
     Grocery.find()
-        .select("name price description _id groceryImage")
+        .select("name price description _id groceryImage isLiked")
         .exec()
         .then(docs => {
             const response = {
                 count: docs.length,
-                groceryProduct: docs.map(doc => {
+                product: docs.map(doc => {
                     return {
-                        name: doc.name,
-                        price: doc.price,
-                        description: doc.description,
-                        groceryImage: doc.groceryImage,
+                        productName: doc.name,
+                        productPrice: doc.price,
+                        productDescription: doc.description,
+                        productImage: doc.groceryImage,
+                        productisLiked: doc.isLiked,
                         _id: doc._id,
                         request: {
                             type: "GET",
@@ -125,7 +128,7 @@ router.put('/:id', upload.single('groceryImage'), async (req, res) => {
         updateOps[ops] = req.body[ops];
     }
 
-    console.log(updateOps);
+    // console.log(updateOps);
     // function jsonParser(stringValue) {
     //     var string = JSON.stringify(stringValue);
     //     var objectValue = JSON.parse(string);

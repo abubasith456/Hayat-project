@@ -45,6 +45,7 @@ router.post("/", upload.single('drinksImage'), async (req, res, next) => {
         price: req.body.price,
         description: req.body.description,
         drinksImage: req.file.path,
+        isLiked: req.body.isLiked,
 
     });
     drinks
@@ -53,11 +54,12 @@ router.post("/", upload.single('drinksImage'), async (req, res, next) => {
             console.log(result);
             res.status(201).json({
                 message: "Created product successfully",
-                createdProduct: {
-                    name: result.name,
-                    price: result.price,
-                    description: result.description,
-                    drinksImage: result.drinksImage,
+                product: {
+                    productName: result.name,
+                    productPrice: result.price,
+                    productDescription: result.description,
+                    productImage: result.drinksImage,
+                    productisLiked: result.isLiked,
                     _id: result._id,
                     request: {
                         type: 'GET',
@@ -78,17 +80,18 @@ router.post("/", upload.single('drinksImage'), async (req, res, next) => {
 //Get products
 router.get("/", (req, res, next) => {
     Drinks.find()
-        .select("name price description _id drinksImage")
+        .select("name price description _id drinksImage isLiked")
         .exec()
         .then(docs => {
             const response = {
                 count: docs.length,
-                drinksProduct: docs.map(doc => {
+                product: docs.map(doc => {
                     return {
-                        name: doc.name,
-                        price: doc.price,
-                        description: doc.description,
-                        drinksImage: doc.drinksImage,
+                        productName: doc.name,
+                        productPrice: doc.price,
+                        productDescription: doc.description,
+                        productImage: doc.drinksImage,
+                        productisLiked: doc.isLiked,
                         _id: doc._id,
                         request: {
                             type: "GET",
@@ -212,7 +215,7 @@ router.delete("/:id", (req, res) => {
         .exec()
         .then(result => {
             res.status(200).json({
-                message: 'Vegetable deleted',
+                message: 'Drinks deleted',
                 request: {
                     type: 'POST',
                     url: 'http://localhost:3000/products',

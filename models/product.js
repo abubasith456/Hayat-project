@@ -19,7 +19,10 @@ const productSchema = mongoose.Schema({
         type: String,
         //  required: true 
     },
-    rating: { type: Number, default: 0 },
+    isLiked: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 module.exports = mongoose.model('Product', productSchema);

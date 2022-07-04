@@ -45,6 +45,7 @@ router.post("/", upload.single('dairyImage'), async (req, res, next) => {
         price: req.body.price,
         description: req.body.description,
         dairyImage: req.file.path,
+        isLiked: req.body.isLiked,
 
     });
     vegetable
@@ -54,10 +55,11 @@ router.post("/", upload.single('dairyImage'), async (req, res, next) => {
             res.status(201).json({
                 message: "Created product successfully",
                 createdProduct: {
-                    name: result.name,
-                    price: result.price,
-                    description: result.description,
-                    dairyImage: result.dairyImage,
+                    productName: result.name,
+                    productPrice: result.price,
+                    productDescription: result.description,
+                    productDairyImage: result.dairyImage,
+                    productisLiked: result.isLiked,
                     _id: result._id,
                     request: {
                         type: 'GET',
@@ -78,17 +80,18 @@ router.post("/", upload.single('dairyImage'), async (req, res, next) => {
 //Get products
 router.get("/", (req, res, next) => {
     Dairy.find()
-        .select("name price description _id dairyImage")
+        .select("name price description _id dairyImage isLiked")
         .exec()
         .then(docs => {
             const response = {
                 count: docs.length,
                 products: docs.map(doc => {
                     return {
-                        name: doc.name,
-                        price: doc.price,
-                        description: doc.description,
-                        dairyImage: doc.dairyImage,
+                        productName: doc.name,
+                        productPrice: doc.price,
+                        productDescription: doc.description,
+                        productDairyImage: doc.dairyImage,
+                        productisLiked: doc.isLiked,
                         _id: doc._id,
                         request: {
                             type: "GET",

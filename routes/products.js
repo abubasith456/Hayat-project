@@ -46,7 +46,7 @@ router.post("/", upload.single('productImage'), async (req, res, next) => {
         price: req.body.price,
         description: req.body.description,
         productImage: req.file.path,
-        rating: req.body.rating,
+        isLiked: req.body.isLiked,
     });
     product
         .save()
@@ -55,10 +55,10 @@ router.post("/", upload.single('productImage'), async (req, res, next) => {
             res.status(201).json({
                 message: "Created product successfully",
                 createdProduct: {
-                    name: result.name,
-                    price: result.price,
-                    description: result.description,
-                    rating: result.rating,
+                    productName: result.name,
+                    productPrice: result.price,
+                    productDescription: result.description,
+                    productisLiked: result.isLiked,
                     _id: result._id,
                     request: {
                         type: 'GET',
@@ -78,17 +78,18 @@ router.post("/", upload.single('productImage'), async (req, res, next) => {
 //Get products
 router.get("/", (req, res, next) => {
     Product.find()
-        .select("name price description category _id productImage")
+        .select("name price description category _id productImage isLiked")
         .exec()
         .then(docs => {
             const response = {
                 count: docs.length,
                 products: docs.map(doc => {
                     return {
-                        name: doc.name,
-                        price: doc.price,
-                        description: doc.description,
+                        productName: doc.name,
+                        productPrice: doc.price,
+                        productDescription: doc.description,
                         productImage: doc.productImage,
+                        productisLiked: doc.isLiked,
                         _id: doc._id,
                         request: {
                             type: "GET",

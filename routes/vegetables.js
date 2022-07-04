@@ -45,7 +45,7 @@ router.post("/", upload.single('vegetableImage'), async (req, res, next) => {
         price: req.body.price,
         description: req.body.description,
         vegetableImage: req.file.path,
-
+        isLiked: req.body.isLiked,
     });
     vegetable
         .save()
@@ -54,10 +54,11 @@ router.post("/", upload.single('vegetableImage'), async (req, res, next) => {
             res.status(201).json({
                 message: "Created product successfully",
                 createdProduct: {
-                    name: result.name,
-                    price: result.price,
-                    description: result.description,
-                    vegetableImage: result.vegetableImage,
+                    productName: result.name,
+                    productPrice: result.price,
+                    productDescription: result.description,
+                    productImage: result.vegetableImage,
+                    productisLiked: result.isLiked,
                     _id: result._id,
                     request: {
                         type: 'GET',
@@ -78,17 +79,18 @@ router.post("/", upload.single('vegetableImage'), async (req, res, next) => {
 //Get products
 router.get("/", (req, res, next) => {
     Vegetables.find()
-        .select("name price description _id vegetableImage")
+        .select("name price description _id vegetableImage isLiked")
         .exec()
         .then(docs => {
             const response = {
                 count: docs.length,
                 products: docs.map(doc => {
                     return {
-                        name: doc.name,
-                        price: doc.price,
-                        description: doc.description,
-                        vegetableImage: doc.vegetableImage,
+                        productName: doc.name,
+                        productPrice: doc.price,
+                        productDescription: doc.description,
+                        productImage: doc.vegetableImage,
+                        productisLiked: doc.isLiked,
                         _id: doc._id,
                         request: {
                             type: "GET",
@@ -122,23 +124,23 @@ router.put('/:id', upload.single('vegetableImage'), async (req, res) => {
         updateOps[ops] = req.body[ops];
     }
 
-    function jsonParser(stringValue) {
-        var string = JSON.stringify(stringValue);
-        var objectValue = JSON.parse(string);
-        return objectValue[stringValue];
-    }
+    // function jsonParser(stringValue) {
+    //     var string = JSON.stringify(stringValue);
+    //     var objectValue = JSON.parse(string);
+    //     return objectValue[stringValue];
+    // }
 
-    var objForUpdate = {};
+    // var objForUpdate = {};
 
-    if (req.body.nome) objForUpdate.nome = req.body.nome;
-    if (req.body.price) objForUpdate.price = req.body.price;
-    if (req.body.description) objForUpdate.description = req.body.description;
-    if (req.body.vegetableImage) objForUpdate.vegetableImage = req.body.path;
+    // if (req.body.nome) objForUpdate.nome = req.body.nome;
+    // if (req.body.price) objForUpdate.price = req.body.price;
+    // if (req.body.description) objForUpdate.description = req.body.description;
+    // if (req.body.vegetableImage) objForUpdate.vegetableImage = req.body.path;
 
-    //before edit- There is no need for creating a new variable
-    var setObj = { $set: objForUpdate }
+    // //before edit- There is no need for creating a new variable
+    // var setObj = { $set: objForUpdate }
 
-    // objForUpdate = { $set: objForUpdate }
+    // // objForUpdate = { $set: objForUpdate }
 
     console.log(updateOps);
     Vegetables.updateOne({ _id: id }, { $set: updateOps })

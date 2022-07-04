@@ -14,6 +14,10 @@ const groceryScheme = mongoose.Schema({
     groceryImage: {
         type: String,
     },
+    isLiked: {
+        type: Boolean,
+        default: false,
+    }
 });
 
 module.exports = mongoose.model('Grocery', groceryScheme);
