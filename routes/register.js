@@ -17,7 +17,8 @@ function failedResponse(message) {
     return {
         "status": 400,
         "connection": "Dissconnected",
-        "message": message
+        "message": message,
+        "userData": {}
     }
 }
 

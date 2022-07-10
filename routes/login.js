@@ -6,22 +6,31 @@ const bcrypt = require("bcrypt");
 const responseModel = require("../utils/responseModel")
 
 
-function successResponse(message) {
+function successResponse(message, data) {
     return {
         "status": 200,
         "connection": "Connected",
-        "message": message
+        "message": message,
+        "userData": {
+            "user_id": data.unique_id,
+            "username": data.username,
+            "email": data.email,
+            "dateOfBirth": data.dateOfBirth,
+            "mobileNumber": data.mobileNumber
+        }
     }
 }
 
 function failedResponse(message) {
     return {
-        "status": 400,
-        "connection": "Dissconnected",
-        "message": message
+        "status": 500,
+        "connection": "Connected",
+        "message": message,
+        "userData": {
+
+        }
     }
 }
-
 
 //Login user
 router.post('/', function (req, res, next) {
@@ -55,7 +64,7 @@ router.post('/', function (req, res, next) {
                         }
                     }
                     // res.send(profileResponse('Login Success', 200, data));
-                    res.send(data);
+                    res.send(successResponse("Login success", data));
                 } else {
                     res.send(failedResponse('Wrong password!'));
                 }

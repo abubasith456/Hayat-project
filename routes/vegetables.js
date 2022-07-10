@@ -32,6 +32,27 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
+
+function successResponse(docs) {
+    return {
+        count: docs.length,
+        products: docs.map(doc => {
+            return {
+                productName: doc.name,
+                productPrice: doc.price,
+                productDescription: doc.description,
+                productImage: doc.vegetableImage,
+                productisLiked: doc.isLiked,
+                _id: doc._id,
+                request: {
+                    type: "GET",
+                    url: "http://localhost:4000/products/" + doc._id
+                }
+            };
+        })
+    };
+}
+
 //Add products
 router.post("/", upload.single('vegetableImage'), async (req, res, next) => {
     // const category = await Category.findById(req.body.category);

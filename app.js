@@ -20,6 +20,7 @@ const grocery = require("./routes/grocery");
 const drinks = require("./routes/drinks");
 const fruites = require("./routes/fruits");
 const dairy = require("./routes/dairy");
+const forgotPassword = require("./routes/forgotPassword")
 
 //Mongoes Db
 mongoose.connect('mongodb+srv://basith:basith@cluster0.fhejr.mongodb.net/RegisterLogin?retryWrites=true&w=majority', {
@@ -70,6 +71,8 @@ app.use("/grocery", grocery);
 app.use("/fruits", fruites);
 app.use("/drinks", drinks);
 app.use("/dairy", dairy);
+app.use("/forgotPassword", forgotPassword);
+
 
 
 //Error catch
