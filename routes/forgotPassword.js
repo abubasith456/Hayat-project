@@ -25,7 +25,9 @@ var otp = Math.random();
 otp = otp * 10000;
 otp = parseInt(otp);
 
-console.log(otp);
+var newOtpValue = Math.floor(1000 + Math.random() * 9000);
+
+console.log(newOtpValue);
 
 
 // let transporter = nodemailer.createTransport({
@@ -78,7 +80,7 @@ router.post('/', async (req, res, next) => {
                          </div>
                          <p style="font-size:1.1em">Hi ${data.username},</p>
                          <p>Thank you for choosing the Hayat. Use the following OTP to complete your forgot password procedures. OTP is valid for 5 minutes</p>
-                         <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
+                         <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${newOtpValue}</h2>
                          <p style="font-size:0.9em;">Regards,<br />Hayat Store</p>
                          <hr style="border:none;border-top:1px solid #eee" />
                          <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
