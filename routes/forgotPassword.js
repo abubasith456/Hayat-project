@@ -25,9 +25,6 @@ var otp = Math.random();
 otp = otp * 10000;
 otp = parseInt(otp);
 
-var newOtpValue = Math.floor(1000 + Math.random() * 9000);
-
-console.log(newOtpValue);
 
 var transporter = nodemailer.createTransport({
 
@@ -48,6 +45,8 @@ router.post('/', async (req, res, next) => {
     try {
         var email = req.body.email;
         console.log(email);
+
+        var newOtpValue = Math.floor(1000 + Math.random() * 9000);
 
         User.findOne({ email: email }, function async(err, data) {
             console.log(data);
@@ -232,6 +231,7 @@ router.post('/resend', function (req, res) {
     try {
         var email = req.body.email;
         console.log(email);
+        var newOtpValue = Math.floor(1000 + Math.random() * 9000);
 
         User.findOne({ email: email }, function async(err, data) {
             console.log(data);
