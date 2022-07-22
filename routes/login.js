@@ -3,7 +3,6 @@ var router = express.Router();
 var app = express();
 var User = require('../models/user');
 const bcrypt = require("bcrypt");
-const responseModel = require("../utils/responseModel")
 
 
 function successResponse(message, data) {
@@ -50,19 +49,19 @@ router.post('/', function (req, res, next) {
 
                     req.userId = data.unique_id;
                     //console.log(req.session.userId);
-
-                    var data = {
-                        "status": 200,
-                        "connection": "Connected",
-                        "message": "Login success",
-                        "userData": {
-                            "user_id": data.unique_id,
-                            "username": data.username,
-                            "email": data.email,
-                            "dateOfBirth": data.dateOfBirth,
-                            "mobileNumber": data.mobileNumber
-                        }
-                    }
+                    console.log(data);
+                    // var data = {
+                    //     "status": 200,
+                    //     "connection": "Connected",
+                    //     "message": "Login success",
+                    //     "userData": {
+                    //         "user_id": data.unique_id,
+                    //         "username": data.username,
+                    //         "email": data.email,
+                    //         "dateOfBirth": data.dateOfBirth,
+                    //         "mobileNumber": data.mobileNumber
+                    //     }
+                    // }
                     // res.send(profileResponse('Login Success', 200, data));
                     res.send(successResponse("Login success", data));
                 } else {
