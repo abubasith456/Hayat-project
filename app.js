@@ -6,12 +6,12 @@ var bodyParser = require('body-parser');
 const morgan = require('morgan');
 
 
-
 //Routes
 const login = require("./routes/login");
 const register = require("./routes/register");
 const profile = require("./routes/profile");
 const profileUpdate = require("./routes/profileUpdate");
+const changePassword = require("./routes/changePassword");
 const productRoutes = require("./routes/products");
 const orderRoutes = require("./routes/orders");
 const category = require("./routes/category");
@@ -72,6 +72,7 @@ app.use("/fruits", fruites);
 app.use("/drinks", drinks);
 app.use("/dairy", dairy);
 app.use("/forgotPassword", forgotPassword);
+app.use("/changePassword", changePassword);
 
 
 
