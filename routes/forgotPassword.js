@@ -30,11 +30,6 @@ var transporter = nodemailer.createTransport({
 
     service: 'gmail',
 
-    // auth: {
-    //     user: 'hayatstore200@gmail.com', // here use your real email
-    //     pass: 'okgztdbrpskasxpv' // put your password correctly (not in this question please)
-    // }
-
     auth: {
         user: 'abubasith456@gmail.com', // here use your real email
         pass: 'vmllbwfiehtqaeep' // put your password correctly (not in this question please)
@@ -67,8 +62,8 @@ router.post('/', async (req, res, next) => {
                         //Generate Main formate how you send.
                         var mailOptions = {
                             priority: "high",
-                            from: 'hayatstore@gmail.com',
-                            to: 'abubasith143@gmail.com ',
+                            from: 'hayatstore200@gmail.com',
+                            to: email,
                             subject: `OTP for frogot password`,
                             html: `<div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
                                <div style="margin:50px auto;width:70%;padding:20px 0">
