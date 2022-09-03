@@ -4,11 +4,41 @@ var FCM = require('fcm-node');
 var serverKey = 'AAAAKXRRooI:APA91bH9pMJziYPRNRI2XyMaSIG_e5a-eJzxMSkaozaCrmCencitDrTul4XyrVAV87K6d-56zGJC49y7Cz6mTRpcxca16QzmF1TF8EW7OmxHPvcQdseHWoD3TIAe62u2gfY0pVXlhJ8Y'
 var fcm = new FCM(serverKey);
 
+function Response(errorCode, message) {
+    return {
+        "status": errorCode,
+        "connection": "Connected",
+        "message": message,
+        "userData": {
 
+        }
+    }
+}
 
 router.post('pushToken', function (req, res) {
 
+    var unique_id = req.unique_id;
+    var pushTokenValue = req.pushToken;
 
+    User.updateOne({
+        unique_id
+            : unique_id
+    }, {
+        $set: {
+            pushToken: pushTokenValue
+        }
+    }).exec()
+        .then(result => {
+
+            res.send(Response(200, "Push token updated...."));
+
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
 
 });
 
