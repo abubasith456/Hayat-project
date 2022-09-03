@@ -15,7 +15,9 @@ function Response(errorCode, message) {
     }
 }
 
-router.post('pushToken', function (req, res) {
+router.post('/pushToken', function (req, res) {
+
+    console.log(req);
 
     var unique_id = req.unique_id;
     var pushTokenValue = req.pushToken;
@@ -44,7 +46,7 @@ router.post('pushToken', function (req, res) {
 
 
 
-router.post('push', function (req, res) {
+router.post('/push', function (req, res) {
 
     var deviceToken = req.deviceToken;
     var title = req.title;
