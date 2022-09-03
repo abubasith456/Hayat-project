@@ -55,16 +55,16 @@ router.post('/pushToken', async function (req, res) {
 
 router.post('/push', function (req, res) {
 
-    var deviceToken = req.deviceToken;
-    var title = req.title;
-    var body = req.title;
+    var deviceToken = req.body.deviceToken;
+    var title = req.body.title;
+    var bodyText = req.body.bodyText;
 
     var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
         to: deviceToken,
 
         notification: {
             title: title,
-            body: body,
+            body: bodyText,
         },
 
         // data: {  //you can send only notification or only data(or include both)
@@ -76,7 +76,7 @@ router.post('/push', function (req, res) {
     fcm.send(message, function (err, response) {
         if (err) {
             res.send("Something has gone wrong!");
-            console.log("Something has gone wrong!");
+            console.log("Something has gone wrong! " + err);
         } else {
             console.log();
             res.send("Successfully sent with response: ", response);
