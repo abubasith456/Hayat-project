@@ -9,6 +9,7 @@ userSchema = new Schema({
 	mobileNumber: String,
 	password: String,
 	passwordConf: String,
+	pushToken: String,
 	token: String,
 }),
 	User = mongoose.model('User', userSchema);
