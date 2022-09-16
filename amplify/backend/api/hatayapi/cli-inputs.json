@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/shop": {
+      "name": "/shop",
+      "lambdaFunction": "hayatshopfunction",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}

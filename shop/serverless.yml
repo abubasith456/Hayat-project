@@ -1,0 +1,14 @@
+org: abubasith456
+app: shop
+service: shop
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+
+functions:
+  api:
+    handler: handler.handler
+    events:
+      - httpApi: '*'
