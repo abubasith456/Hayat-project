@@ -18,6 +18,8 @@ function Response(errorCode, message) {
 
 router.post('/pushToken', async function (req, res) {
 
+    console(req);
+
     var unique_idValue = req.body.unique_id;
     var pushTokenValue = req.body.pushToken;
 
@@ -54,6 +56,8 @@ router.post('/pushToken', async function (req, res) {
 
 
 router.post('/push', function (req, res) {
+
+    console.log(req);
 
     var deviceToken = req.body.deviceToken;
     var title = req.body.title;
