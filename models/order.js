@@ -17,7 +17,7 @@ const orderSchema = new mongoose.Schema(
                     //  required: true 
                 },
                 quantity: {
-                    type: Float32Array,
+                    type: String,
                 },
             },
         ],
