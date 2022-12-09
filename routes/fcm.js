@@ -18,7 +18,6 @@ function Response(errorCode, message) {
 
 router.post('/pushToken', async function (req, res) {
 
-    console(req);
 
     var unique_idValue = req.body.unique_id;
     var pushTokenValue = req.body.pushToken;
