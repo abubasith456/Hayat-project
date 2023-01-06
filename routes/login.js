@@ -3,6 +3,11 @@ var router = express.Router();
 var app = express();
 var User = require('../models/user');
 const bcrypt = require("bcrypt");
+// var admin = require("firebase-admin");
+// var fcm = require("fcm-notification");
+// var serviceAccount = require("../push-notification-key.json");
+// var credPath = admin.credential.cert(serviceAccount);
+// var FCM = new fcm(credPath);
 
 
 function successResponse(message, data) {
@@ -30,6 +35,33 @@ function failedResponse(message) {
         }
     }
 }
+
+// router.post('/send', function (req, res) {
+//     try {
+//         let message = {
+//             notification: {
+//                 title: "Test",
+//                 body: "Test body"
+
+//             },
+//             data: {
+//                 orderId: "123444",
+//             },
+//             token: "f42QVjpxSiSCTExP1R5f2R:APA91bFfOHC58Jm4dsclBrbl4-6Pn4HF4wtKjikueZaJItXHbHQO1uzFS5yMvyt0_M4gE573egpVBXgACTXZ4fCVs_hJjmwWfY3-2ZWmK7brWQjFy_U29DuMGotKttPucuGKERnQDBSM",
+
+//         }
+
+//         FCM.send(message, function (err, res) {
+//             if (err) {
+//                 res.status(500).json(err);
+//             } else {
+//                 res.status(200).json(err);
+//             }
+//         });
+//     } catch (err) {
+//         res.status(500).json(err);
+//     }
+// });
 
 //Login user
 router.post('/', function (req, res, next) {

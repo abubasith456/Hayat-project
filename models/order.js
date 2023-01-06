@@ -4,6 +4,8 @@ const orderSchema = new mongoose.Schema(
     {
         unique_id: { type: Number, required: true },
         numOfItems: { type: Number, required: true },
+        user_id: { type: Number, required: true },
+        user_name: { type: String, required: true },
         products: [
             {
                 productId: {

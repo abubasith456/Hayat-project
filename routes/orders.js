@@ -4,6 +4,11 @@ const mongoose = require("mongoose");
 
 const Order = require("../models/order");
 const Product = require("../models/product");
+var admin = require("firebase-admin");
+var fcm = require("fcm-notification");
+var serviceAccount = require("../push-notification-key.json");
+var credPath = admin.credential.cert(serviceAccount);
+var FCM = new fcm(credPath);
 
 // Handle incoming GET requests to /orders
 // router.get("/", (req, res, next) => {
@@ -45,6 +50,31 @@ router.post("/", async (req, res, next) => {
     try {
         const orders = await order.save();
         res.status(200).json(orders);
+        try {
+            let message = {
+                notification: {
+                    title: "Order Placed",
+                    body: "Your order is on the way...."
+                },
+                data: {
+                    orderId: "123444",
+                    orderName: "hbchjsbc",
+                },
+                token: "f42QVjpxSiSCTExP1R5f2R:APA91bFfOHC58Jm4dsclBrbl4-6Pn4HF4wtKjikueZaJItXHbHQO1uzFS5yMvyt0_M4gE573egpVBXgACTXZ4fCVs_hJjmwWfY3-2ZWmK7brWQjFy_U29DuMGotKttPucuGKERnQDBSM",
+
+            }
+
+            FCM.send(message, function (err, res) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    console.log("Notified")
+                }
+            });
+        } catch (err) {
+            res.status(500).json(err);
+        }
+
     } catch (err) {
         res.status(500).json(err);
     }
