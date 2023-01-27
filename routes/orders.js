@@ -50,8 +50,6 @@ router.post("/", async (req, res, next) => {
 
     try {
         const orders = await order.save();
-    
-        if(!orders.$isEmpty) {
             User.findOne({ unique_id: req.body.unique_id }, async function (err, data) {
                 console.log(data.pushToken);
                 if (data) {
@@ -85,9 +83,6 @@ router.post("/", async (req, res, next) => {
                 }
             });
             res.status(200).json(orders);
-        } else {
-            res.status(500).json("");
-        }
 
         // try {
         //     let message = {
