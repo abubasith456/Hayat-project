@@ -49,10 +49,11 @@ router.post("/", async (req, res, next) => {
     const order = new Order(req.body);
 
     try {
-        const orders = await order.save();
-        res.status(200).json(orders);
+        // const orders = await order.save();
+        // res.status(200).json(orders);
 
         User.findOne({ unique_id: req.body.unique_id }, async function (err, data) {
+            console.log(data.pushToken);
             if (data) {
                 var data = JSON.stringify({
                     "content_available": true,
