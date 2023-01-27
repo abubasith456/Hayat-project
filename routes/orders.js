@@ -1,9 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-
+var axios = require('axios');
 const Order = require("../models/order");
 const Product = require("../models/product");
+var User = require('../models/user');
+const pushApi = "https://fcm.googleapis.com/fcm/send";
 // var admin = require("firebase-admin");
 // var fcm = require("fcm-notification");
 // var serviceAccount = require("../push-notification-key.json");
@@ -42,7 +44,6 @@ const Product = require("../models/product");
 
 //Post order
 router.post("/", async (req, res, next) => {
-
     console.log(req.body);
 
     const order = new Order(req.body);
@@ -50,6 +51,40 @@ router.post("/", async (req, res, next) => {
     try {
         const orders = await order.save();
         res.status(200).json(orders);
+
+        User.findOne({ unique_id: req.body.unique_id }, async function (err, data) {
+            if (data) {
+                var data = JSON.stringify({
+                    "content_available": true,
+                    "priority": "high",
+                    "to": data.pushToken,
+                    "notification": {
+                        "title": "Order Placed",
+                        "body": "We are preparing your items..."
+                    }
+                });
+
+                var config = {
+                    method: 'post',
+                    url: pushApi,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'key=AAAAKXRRooI:APA91bH9pMJziYPRNRI2XyMaSIG_e5a-eJzxMSkaozaCrmCencitDrTul4XyrVAV87K6d-56zGJC49y7Cz6mTRpcxca16QzmF1TF8EW7OmxHPvcQdseHWoD3TIAe62u2gfY0pVXlhJ8Y'
+                    },
+                    data: data
+                };
+
+                axios(config)
+                    .then(function (response) {
+                        console.log(JSON.stringify(response.data));
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            }
+        });
+
+
         // try {
         //     let message = {
         //         notification: {
@@ -74,6 +109,7 @@ router.post("/", async (req, res, next) => {
         // } catch (err) {
         //     res.status(500).json(err);
         // }
+
 
     } catch (err) {
         res.status(500).json(err);
