@@ -49,42 +49,45 @@ router.post("/", async (req, res, next) => {
     const order = new Order(req.body);
 
     try {
-        // const orders = await order.save();
-        // res.status(200).json(orders);
-
-        User.findOne({ unique_id: req.body.unique_id }, async function (err, data) {
-            console.log(data.pushToken);
-            if (data) {
-                var data = JSON.stringify({
-                    "content_available": true,
-                    "priority": "high",
-                    "to": data.pushToken,
-                    "notification": {
-                        "title": "Order Placed",
-                        "body": "We are preparing your items..."
-                    }
-                });
-
-                var config = {
-                    method: 'post',
-                    url: pushApi,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': 'key=AAAAKXRRooI:APA91bH9pMJziYPRNRI2XyMaSIG_e5a-eJzxMSkaozaCrmCencitDrTul4XyrVAV87K6d-56zGJC49y7Cz6mTRpcxca16QzmF1TF8EW7OmxHPvcQdseHWoD3TIAe62u2gfY0pVXlhJ8Y'
-                    },
-                    data: data
-                };
-
-                axios(config)
-                    .then(function (response) {
-                        console.log(JSON.stringify(response.data));
-                    })
-                    .catch(function (error) {
-                        console.log(error);
+        const orders = await order.save();
+    
+        if(!orders.$isEmpty) {
+            User.findOne({ unique_id: req.body.unique_id }, async function (err, data) {
+                console.log(data.pushToken);
+                if (data) {
+                    var data = JSON.stringify({
+                        "content_available": true,
+                        "priority": "high",
+                        "to": data.pushToken,
+                        "notification": {
+                            "title": "Order Placed",
+                            "body": "We are preparing your items..."
+                        }
                     });
-            }
-        });
-
+    
+                    var config = {
+                        method: 'post',
+                        url: pushApi,
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'key=AAAAKXRRooI:APA91bH9pMJziYPRNRI2XyMaSIG_e5a-eJzxMSkaozaCrmCencitDrTul4XyrVAV87K6d-56zGJC49y7Cz6mTRpcxca16QzmF1TF8EW7OmxHPvcQdseHWoD3TIAe62u2gfY0pVXlhJ8Y'
+                        },
+                        data: data
+                    };
+    
+                    axios(config)
+                        .then(function (response) {
+                            console.log(JSON.stringify(response.data));
+                        })
+                        .catch(function (error) {
+                            console.log(error);
+                        });
+                }
+            });
+            res.status(200).json(orders);
+        } else {
+            res.status(500).json("");
+        }
 
         // try {
         //     let message = {
