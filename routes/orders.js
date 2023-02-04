@@ -50,39 +50,39 @@ router.post("/", async (req, res, next) => {
 
     try {
         const orders = await order.save();
-            User.findOne({ unique_id: req.body.unique_id }, async function (err, data) {
-                console.log(data.pushToken);
-                if (data) {
-                    var data = JSON.stringify({
-                        "content_available": true,
-                        "priority": "high",
-                        "to": data.pushToken,
-                        "notification": {
-                            "title": "Order Placed",
-                            "body": "We are preparing your items..."
-                        }
+        User.findOne({ unique_id: req.body.unique_id }, async function (err, data) {
+            console.log(data.pushToken);
+            if (data) {
+                var data = JSON.stringify({
+                    "content_available": true,
+                    "priority": "high",
+                    "to": data.pushToken,
+                    "notification": {
+                        "title": "Order Placed",
+                        "body": "We are preparing your items..."
+                    }
+                });
+
+                var config = {
+                    method: 'post',
+                    url: pushApi,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'key=AAAAKXRRooI:APA91bH9pMJziYPRNRI2XyMaSIG_e5a-eJzxMSkaozaCrmCencitDrTul4XyrVAV87K6d-56zGJC49y7Cz6mTRpcxca16QzmF1TF8EW7OmxHPvcQdseHWoD3TIAe62u2gfY0pVXlhJ8Y'
+                    },
+                    data: data
+                };
+
+                axios(config)
+                    .then(function (response) {
+                        console.log(JSON.stringify(response.data));
+                    })
+                    .catch(function (error) {
+                        console.log(error);
                     });
-    
-                    var config = {
-                        method: 'post',
-                        url: pushApi,
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': 'key=AAAAKXRRooI:APA91bH9pMJziYPRNRI2XyMaSIG_e5a-eJzxMSkaozaCrmCencitDrTul4XyrVAV87K6d-56zGJC49y7Cz6mTRpcxca16QzmF1TF8EW7OmxHPvcQdseHWoD3TIAe62u2gfY0pVXlhJ8Y'
-                        },
-                        data: data
-                    };
-    
-                    axios(config)
-                        .then(function (response) {
-                            console.log(JSON.stringify(response.data));
-                        })
-                        .catch(function (error) {
-                            console.log(error);
-                        });
-                }
-            });
-            res.status(200).json(orders);
+            }
+        });
+        res.status(200).json(orders);
 
         // try {
         //     let message = {
@@ -155,14 +155,35 @@ router.post("/", async (req, res, next) => {
 router.put("/:id", async (req, res) => {
     console.log(req.body);
     try {
-        const updatedOrder = await Order.findByIdAndUpdate(
-            req.params.id,
-            {
-                $set: req.body,
-            },
-            { new: true }
-        );
-        res.status(200).json(updatedOrder);
+        const updateOrderStatus = {};
+        for (const ops of Object.keys(req.body)) {
+            updateOrderStatus[ops] = req.body[ops];
+        }
+        Order.updateOne({ _id: req.params.id }, { $set: updateOrderStatus })
+            .exec()
+            .then(result => {
+                res.status(200).json({
+                    message: 'Order canceled',
+                    request: {
+                        type: 'PUT',
+                        url: 'http://localhost:3000/products/' + id
+                    }
+                });
+            })
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({
+                    error: err
+                });
+            });
+        // const updatedOrder = await Order.findByIdAndUpdate(
+        //     req.params.id,
+        //     {
+        //         $set: req.body,
+        //     },
+        //     { new: true }
+        // );
+        // res.status(200).json(updatedOrder);
     } catch (err) {
         console.log(err);
         res.status(500).json(err);
