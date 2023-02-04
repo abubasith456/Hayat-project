@@ -153,6 +153,7 @@ router.post("/", async (req, res, next) => {
 
 //UPDATE
 router.put("/:id", async (req, res) => {
+    console.log(req.body);
     try {
         const updatedOrder = await Order.findByIdAndUpdate(
             req.params.id,
@@ -163,6 +164,7 @@ router.put("/:id", async (req, res) => {
         );
         res.status(200).json(updatedOrder);
     } catch (err) {
+        console.log(err);
         res.status(500).json(err);
     }
 });
