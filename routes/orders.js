@@ -159,23 +159,32 @@ router.put("/:id", async (req, res) => {
         for (const ops of Object.keys(req.body)) {
             updateOrderStatus[ops] = req.body[ops];
         }
-        Order.updateOne({ _id: req.params.id }, { $set: updateOrderStatus })
-            .exec()
-            .then(result => {
-                res.status(200).json({
-                    message: 'Order canceled',
-                    request: {
-                        type: 'PUT',
-                        url: 'http://localhost:3000/products/' + id
-                    }
-                });
-            })
-            .catch(err => {
-                console.log(err);
-                res.status(500).json({
-                    error: err
-                });
-            });
+        Order.findById(req.params.id, function (err, order) {
+            if (err) {
+                res.send(err);
+                console.log(updateOrderStatus);
+            } else {
+                res.send(order);
+            }
+        });
+
+        // Order.updateOne({ _id: req.params.id }, { $set: updateOrderStatus })
+        //     .exec()
+        //     .then(result => {
+        //         res.status(200).json({
+        //             message: 'Order canceled',
+        //             request: {
+        //                 type: 'PUT',
+        //                 url: 'http://localhost:3000/products/' + id
+        //             }
+        //         });
+        //     })
+        //     .catch(err => {
+        //         console.log(err);
+        //         res.status(500).json({
+        //             error: err
+        //         });
+        //     });
         // const updatedOrder = await Order.findByIdAndUpdate(
         //     req.params.id,
         //     {
