@@ -6,40 +6,6 @@ const Order = require("../models/order");
 const Product = require("../models/product");
 var User = require('../models/user');
 const pushApi = "https://fcm.googleapis.com/fcm/send";
-// var admin = require("firebase-admin");
-// var fcm = require("fcm-notification");
-// var serviceAccount = require("../push-notification-key.json");
-// var credPath = admin.credential.cert(serviceAccount);
-// var FCM = new fcm(credPath);
-
-// Handle incoming GET requests to /orders
-// router.get("/", (req, res, next) => {
-//     Order.find()
-//         .select("product quantity _id")
-//         .populate('product', 'name')
-//         .exec()
-//         .then(docs => {
-//             res.status(200).json({
-//                 count: docs.length,
-//                 orders: docs.map(doc => {
-//                     return {
-//                         _id: doc._id,
-//                         product: doc.product,
-//                         quantity: doc.quantity,
-//                         request: {
-//                             type: "GET",
-//                             url: "http://localhost:3000/orders/" + doc._id
-//                         }
-//                     };
-//                 })
-//             });
-//         })
-//         .catch(err => {
-//             res.status(500).json({
-//                 error: err
-//             });
-//         });
-// });
 
 function successResponse(message) {
     return {
@@ -99,81 +65,15 @@ router.post("/", async (req, res, next) => {
         });
         res.status(200).json(orders);
 
-        // try {
-        //     let message = {
-        //         notification: {
-        //             title: "Order Placed",
-        //             body: "Your order is on the way...."
-        //         },
-        //         data: {
-        //             orderId: "123444",
-        //             orderName: "hbchjsbc",
-        //         },
-        //         token: "f42QVjpxSiSCTExP1R5f2R:APA91bFfOHC58Jm4dsclBrbl4-6Pn4HF4wtKjikueZaJItXHbHQO1uzFS5yMvyt0_M4gE573egpVBXgACTXZ4fCVs_hJjmwWfY3-2ZWmK7brWQjFy_U29DuMGotKttPucuGKERnQDBSM",
-
-        //     }
-
-        //     FCM.send(message, function (err, res) {
-        //         if (err) {
-        //             console.log(err)
-        //         } else {
-        //             console.log("Notified")
-        //         }
-        //     });
-        // } catch (err) {
-        //     res.status(500).json(err);
-        // }
-
-
     } catch (err) {
         res.status(500).json(err);
     }
-
-    // Product.findById(req.body.productId)
-    //     .then(product => {
-    //         if (!product) {
-    //             return res.status(404).json({
-    //                 message: "Product not found"
-    //             });
-    //         }
-    //         const order = new Order({
-    //             _id: mongoose.Types.ObjectId(),
-    //             quantity: req.body.quantity,
-    //             product: req.body.productId
-    //         });
-    //         return order.save();
-    //     })
-    //     .then(result => {
-    //         console.log(result);
-    //         res.status(201).json({
-    //             message: "Order placed sucessfully",
-    //             createdOrder: {
-    //                 _id: result._id,
-    //                 product: result.product,
-    //                 quantity: result.quantity
-    //             },
-    //             request: {
-    //                 type: "GET",
-    //                 url: "http://localhost:3000/orders/" + result._id
-    //             }
-    //         });
-    //     })
-    //     .catch(err => {
-    //         console.log(err);
-    //         res.status(500).json({
-    //             error: err
-    //         });
-    //     });
 });
 
 //UPDATE
 router.put("/:id", async (req, res) => {
     console.log(req.params.id);
     try {
-
-        // Order.findOne({ _id: req.params.id }, function (err, data) {
-
-        //     if (data) {
 
         console.log(req.body);
 
@@ -185,45 +85,7 @@ router.put("/:id", async (req, res) => {
                     return res.send(successResponse("Updated"))
                 }
             })
-        // .exec()
-        // .then(result => {
-        //     return res.send(successResponse(result))
-        // }).catch(err => {
-        //     return res.send(failedResponse(err))
-        // });
 
-        //     } else {
-        //         return res.send(failedResponse("Data not found"))
-        //     }
-
-        // });
-
-
-        // Order.updateOne({ _id: req.params.id }, { $set: updateOrderStatus })
-        //     .exec()
-        //     .then(result => {
-        //         res.status(200).json({
-        //             message: 'Order canceled',
-        //             request: {
-        //                 type: 'PUT',
-        //                 url: 'http://localhost:3000/products/' + id
-        //             }
-        //         });
-        //     })
-        //     .catch(err => {
-        //         console.log(err);
-        //         res.status(500).json({
-        //             error: err
-        //         });
-        //     });
-        // const updatedOrder = await Order.findByIdAndUpdate(
-        //     req.params.id,
-        //     {
-        //         $set: req.body,
-        //     },
-        //     { new: true }
-        // );
-        // res.status(200).json(updatedOrder);
     } catch (err) {
         console.log(err);
         res.status(500).json(err);
@@ -254,29 +116,6 @@ router.get("/:unique_id", async (req, res, next) => {
     } catch (err) {
         res.status(500).json(err);
     }
-
-    // Order.findById(req.params.orderId)
-    //     .populate('product')
-    //     .exec()
-    //     .then(order => {
-    //         if (!order) {
-    //             return res.status(404).json({
-    //                 message: "Order not found"
-    //             });
-    //         }
-    //         res.status(200).json({
-    //             order: order,
-    //             request: {
-    //                 type: "GET",
-    //                 url: "http://localhost:3000/orders"
-    //             }
-    //         });
-    //     })
-    //     .catch(err => {
-    //         res.status(500).json({
-    //             error: err
-    //         });
-    //     });
 });
 
 // //GET ALL
@@ -296,19 +135,10 @@ router.delete("/:orderId", (req, res, next) => {
     Order.remove({ _id: req.params.orderId })
         .exec()
         .then(result => {
-            res.status(200).json({
-                message: "Order deleted",
-                request: {
-                    type: "POST",
-                    url: "http://localhost:3000/orders",
-                    body: { productId: "ID", quantity: "Number" }
-                }
-            });
+            res.status(200).json(successResponse(result));
         })
         .catch(err => {
-            res.status(500).json({
-                error: err
-            });
+            res.status(500).json(failedResponse(err));
         });
 });
 
