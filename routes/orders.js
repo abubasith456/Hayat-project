@@ -166,10 +166,12 @@ router.put("/:id", async (req, res) => {
                     { $set: { status: req.body.status } })
                     .exec()
                     .then(result => {
-                        res.status(200)
+                        res.status(200).send("Updated")
                     }).catch(err => {
                         res.status(500).send(err)
                     });
+                res.status(200).send("Updated")
+
             } else {
                 res.status(500).send("Data not found")
             }
