@@ -41,6 +41,21 @@ const pushApi = "https://fcm.googleapis.com/fcm/send";
 //         });
 // });
 
+function successResponse(message) {
+    return {
+        "status": 200,
+        "connection": "Connected",
+        "message": message
+    }
+}
+
+function failedResponse(message) {
+    return {
+        "status": 400,
+        "connection": "Dissconnected",
+        "message": message
+    }
+}
 
 //Post order
 router.post("/", async (req, res, next) => {
@@ -166,13 +181,13 @@ router.put("/:id", async (req, res) => {
                     { $set: { status: req.body.status } })
                     .exec()
                     .then(result => {
-                        res.sendStatus(200).json(result)
+                        res.send(successResponse(""))
                     }).catch(err => {
-                        res.sendStatus(500).json(err)
+                        res.send(failedResponse(err))
                     });
-                res.sendStatus(500).json({ "status": "Success" })
+
             } else {
-                res.status(500).send("Data not found")
+                res.send(failedResponse("Data not found"))
             }
 
         });
