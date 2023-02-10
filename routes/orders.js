@@ -155,18 +155,27 @@ router.post("/", async (req, res, next) => {
 router.put("/:id", async (req, res) => {
     console.log(req.body);
     try {
-        const updateOrderStatus = {};
-        for (const ops of Object.keys(req.body)) {
-            updateOrderStatus[ops] = req.body[ops];
-        }
-        Order.findById(req.params.id, function (err, order) {
-            if (err) {
-                res.send(err);
-                console.log(updateOrderStatus);
+
+        Order.findOne({ _id: req.params.id }, function async(err, data) {
+
+            console.log(data);
+
+            if (data) {
+
+                Order.updateOne({ unique_id: data.unique_id },
+                    { $set: { status: req.body.status } })
+                    .exec()
+                    .then(result => {
+                        res.status(200)
+                    }).catch(err => {
+                        res.status(500).send(err)
+                    });
             } else {
-                res.send(order);
+                res.status(500).send("Data not found")
             }
+
         });
+
 
         // Order.updateOne({ _id: req.params.id }, { $set: updateOrderStatus })
         //     .exec()
