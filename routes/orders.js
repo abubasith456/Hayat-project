@@ -171,26 +171,32 @@ router.put("/:id", async (req, res) => {
     console.log(req.params.id);
     try {
 
-        Order.findOne({ _id: req.params.id }, function (err, data) {
+        // Order.findOne({ _id: req.params.id }, function (err, data) {
 
-            if (data) {
+        //     if (data) {
 
-                console.log(data);
+        console.log(req.body);
 
-                Order.updateOne({ unique_id: data.unique_id },
-                    { $set: { status: req.body.status } })
-                    .exec()
-                    .then(result => {
-                        return res.send(successResponse(result))
-                    }).catch(err => {
-                        return res.send(failedResponse(err))
-                    });
+        Order.updateOne({ _id: req.params.id },
+            { $set: { status: req.body.status } }, function (err, res) {
+                if (err) {
+                    return res.send(failedResponse(err))
+                } else {
+                    return res.send(successResponse("Updated"))
+                }
+            })
+        // .exec()
+        // .then(result => {
+        //     return res.send(successResponse(result))
+        // }).catch(err => {
+        //     return res.send(failedResponse(err))
+        // });
 
-            } else {
-                return res.send(failedResponse("Data not found"))
-            }
+        //     } else {
+        //         return res.send(failedResponse("Data not found"))
+        //     }
 
-        });
+        // });
 
 
         // Order.updateOne({ _id: req.params.id }, { $set: updateOrderStatus })
