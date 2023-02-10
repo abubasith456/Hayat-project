@@ -168,20 +168,20 @@ router.post("/", async (req, res, next) => {
 
 //UPDATE
 router.put("/:id", async (req, res) => {
-    console.log(req.body);
+    console.log(req.params.id);
     try {
 
-        Order.findOne({ _id: req.params.id }, function async(err, data) {
-
-            console.log(data);
+        Order.findOne({ _id: req.params.id }, function (err, data) {
 
             if (data) {
+
+                console.log(data);
 
                 Order.updateOne({ unique_id: data.unique_id },
                     { $set: { status: req.body.status } })
                     .exec()
                     .then(result => {
-                        res.send(successResponse(""))
+                        res.send(successResponse(result))
                     }).catch(err => {
                         res.send(failedResponse(err))
                     });
