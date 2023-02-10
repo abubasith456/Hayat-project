@@ -178,7 +178,7 @@ router.put("/:id", async (req, res) => {
         console.log(req.body);
 
         Order.updateOne({ _id: req.params.id },
-            { $set: { status: req.body.status } }, function (err, res) {
+            { $set: { status: req.body.status } }, function (err, _) {
                 if (err) {
                     return res.send(failedResponse(err))
                 } else {
