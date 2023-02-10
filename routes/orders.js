@@ -40,7 +40,7 @@ router.post("/", async (req, res, next) => {
                     "to": data.pushToken,
                     "notification": {
                         "title": "Order Placed",
-                        "body": "We are preparing your items..."
+                        "body": "We are preparing your orders..."
                     }
                 });
 
