@@ -181,13 +181,13 @@ router.put("/:id", async (req, res) => {
                     { $set: { status: req.body.status } })
                     .exec()
                     .then(result => {
-                        res.send(successResponse(result))
+                        return res.send(successResponse(result))
                     }).catch(err => {
-                        res.send(failedResponse(err))
+                        return res.send(failedResponse(err))
                     });
 
             } else {
-                res.send(failedResponse("Data not found"))
+                return res.send(failedResponse("Data not found"))
             }
 
         });
