@@ -4,15 +4,6 @@ var app = express();
 var User = require('../models/user');
 const bcrypt = require("bcrypt");
 
-
-function successResponse(message) {
-    return {
-        "status": 200,
-        "connection": "Connected",
-        "message": message
-    }
-}
-
 function failedResponse(message) {
     return {
         "status": 400,
@@ -74,7 +65,8 @@ router.post('/', async function (req, res, next) {
                             dateOfBirth: value.dateOfBirth,
                             mobileNumber: value.mobileNumber,
                             password: password,
-                            passwordConf: value.passwordConf
+                            passwordConf: value.passwordConf,
+                            role: "customer"
                         });
 
                         newPerson.save(function (err, Person) {

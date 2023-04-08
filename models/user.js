@@ -11,6 +11,7 @@ userSchema = new Schema({
 	passwordConf: String,
 	pushToken: String,
 	token: String,
+	role: String
 }),
 	User = mongoose.model('User', userSchema);
 
