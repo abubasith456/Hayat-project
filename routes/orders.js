@@ -131,7 +131,7 @@ router.put("/:id", async (req, res) => {
                     }
 
 
-                    const adminUsers = await User.find({ $elemMatch: { role: 'admin' } })
+                    const adminUsers = User.find({ $elemMatch: { role: 'admin' } })
 
                     console.log(adminUsers)
 
