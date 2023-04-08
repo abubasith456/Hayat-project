@@ -58,12 +58,12 @@ router.post("/", async (req, res, next) => {
                     .then(function (response) {
                         console.log(JSON.stringify(response.data));
 
-                        User.find({ $elemMatch: { role: 'admin' } }, async function (err, data) {
-                        
+                        User.find({ role: 'admin' }, async function (err, data) {
+
                             if (data) {
-                                console.log("Please work==>" + data )
-                            }else {
-                                console.log("Data not found bro sorry" )
+                                console.log("Please work==>" + data)
+                            } else {
+                                console.log("Data not found bro sorry")
                             }
                         });
 
