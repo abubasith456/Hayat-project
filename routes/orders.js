@@ -57,6 +57,10 @@ router.post("/", async (req, res, next) => {
                 axios(config)
                     .then(function (response) {
                         console.log(JSON.stringify(response.data));
+                        const adminUsers = User.find({ $elemMatch: { role: 'admin' } })
+
+                        console.log("Please work bro ==>" + adminUsers)
+
                     })
                     .catch(function (error) {
                         console.log(error);
@@ -129,12 +133,6 @@ router.put("/:id", async (req, res) => {
                     } catch (e) {
                         console.log(e)
                     }
-
-
-                    const adminUsers = User.find({ $elemMatch: { role: 'admin' } })
-
-                    console.log(adminUsers)
-
 
                     return res.send(successResponse("Updated"))
                 }
