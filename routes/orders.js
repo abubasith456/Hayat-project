@@ -68,7 +68,7 @@ router.post("/", async (req, res, next) => {
 
             if (data) {
 
-            data.array.forEach(element => {
+            data.forEach(element => {
                 console.log("Hope it will work" + element)
             });
                 // var data = JSON.stringify({
