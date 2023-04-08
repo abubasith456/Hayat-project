@@ -20,7 +20,8 @@ function successResponse(message, data) {
             "username": data.username,
             "email": data.email,
             "dateOfBirth": data.dateOfBirth,
-            "mobileNumber": data.mobileNumber
+            "mobileNumber": data.mobileNumber,
+            "role": data.role
         }
     }
 }
