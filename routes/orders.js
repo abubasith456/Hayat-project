@@ -82,6 +82,53 @@ router.put("/:id", async (req, res) => {
                 if (err) {
                     return res.send(failedResponse(err))
                 } else {
+
+                    try {
+                        var statusText = ""
+
+                        if (req.body.status == "Cancelled" || req.body.status == "cancelled") {
+                            statusText = "You're order is cancelled"
+                        } else if (req.body.status == "Accepted" || req.body.status == "accepted") {
+                            statusText = "You're order is accepted by the dealer :) "
+                        } else if (req.body.status == "Preparing" || req.body.status == "preparing") {
+                            statusText = "You're order is about to packing :) "
+                        }
+
+                        User.findOne({ unique_id: req.body.unique_id }, async function (err, data) {
+                            console.log(data.pushToken);
+                            if (data) {
+                                var data = JSON.stringify({
+                                    "content_available": true,
+                                    "priority": "high",
+                                    "to": data.pushToken,
+                                    "notification": {
+                                        "title": "Order Status",
+                                        "body": statusText
+                                    }
+                                });
+
+                                var config = {
+                                    method: 'post',
+                                    url: pushApi,
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': 'key=AAAAKXRRooI:APA91bH9pMJziYPRNRI2XyMaSIG_e5a-eJzxMSkaozaCrmCencitDrTul4XyrVAV87K6d-56zGJC49y7Cz6mTRpcxca16QzmF1TF8EW7OmxHPvcQdseHWoD3TIAe62u2gfY0pVXlhJ8Y'
+                                    },
+                                    data: data
+                                };
+
+                                axios(config)
+                                    .then(function (response) {
+                                        console.log(JSON.stringify(response.data));
+                                    })
+                                    .catch(function (error) {
+                                        console.log(error);
+                                    });
+                            }
+                        });
+                    } catch (e) {
+                        console.log(e)
+                    }
                     return res.send(successResponse("Updated"))
                 }
             })
@@ -119,7 +166,6 @@ router.get("/:unique_id", async (req, res, next) => {
 });
 
 // //GET ALL
-
 router.get("/", async (req, res) => {
     try {
         const orders = await Order.find();
