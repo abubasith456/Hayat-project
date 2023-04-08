@@ -57,9 +57,16 @@ router.post("/", async (req, res, next) => {
                 axios(config)
                     .then(function (response) {
                         console.log(JSON.stringify(response.data));
-                        const adminUsers = User.find({ $elemMatch: { role: 'admin' } })
 
-                        console.log("Please work bro ==>" + adminUsers)
+                        User.find({ $elemMatch: { role: 'admin' } }, async function (err, data) {
+                            console.log("Please work ID==>" +data.unique_id);
+                            if (data) {
+                                console.log("Please work==>" + data )
+                            }else {
+                                console.log("Data not found bro sorry" )
+                            }
+                        });
+
 
                     })
                     .catch(function (error) {
