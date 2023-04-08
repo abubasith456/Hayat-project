@@ -59,7 +59,7 @@ router.post("/", async (req, res, next) => {
                         console.log(JSON.stringify(response.data));
 
                         User.find({ $elemMatch: { role: 'admin' } }, async function (err, data) {
-                            console.log("Please work ID==>" +data.unique_id);
+                        
                             if (data) {
                                 console.log("Please work==>" + data )
                             }else {
