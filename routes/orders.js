@@ -57,23 +57,53 @@ router.post("/", async (req, res, next) => {
                 axios(config)
                     .then(function (response) {
                         console.log(JSON.stringify(response.data));
-
-                        User.find({ role: 'admin' }, async function (err, data) {
-
-                            if (data) {
-                                console.log("Please work==>" + data)
-                            } else {
-                                console.log("Data not found bro sorry")
-                            }
-                        });
-
-
                     })
                     .catch(function (error) {
                         console.log(error);
                     });
             }
         });
+
+        User.find({ role: 'admin' }, async function (err, data) {
+
+            if (data) {
+
+            data.array.forEach(element => {
+                console.log("Hope it will work" + element)
+            });
+                // var data = JSON.stringify({
+                //     "content_available": true,
+                //     "priority": "high",
+                //     "to": data.pushToken,
+                //     "notification": {
+                //         "title": "Order Placed",
+                //         "body": "New order placed. Take ready :)"
+                //     }
+                // });
+
+                // var config = {
+                //     method: 'post',
+                //     url: pushApi,
+                //     headers: {
+                //         'Content-Type': 'application/json',
+                //         'Authorization': 'key=AAAAKXRRooI:APA91bH9pMJziYPRNRI2XyMaSIG_e5a-eJzxMSkaozaCrmCencitDrTul4XyrVAV87K6d-56zGJC49y7Cz6mTRpcxca16QzmF1TF8EW7OmxHPvcQdseHWoD3TIAe62u2gfY0pVXlhJ8Y'
+                //     },
+                //     data: data
+                // };
+
+                // axios(config)
+                //     .then(function (response) {
+                //         console.log(JSON.stringify(response.data));
+                //     })
+                //     .catch(function (error) {
+                //         console.log(error);
+                //     });
+
+            } else {
+                console.log("Data not found bro sorry")
+            }
+        });
+
         res.status(200).json(orders);
 
     } catch (err) {
