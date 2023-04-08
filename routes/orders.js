@@ -70,12 +70,13 @@ router.post("/", async (req, res, next) => {
         User.find({ role: 'admin' }, async function (err, data) {
 
             if (data) {
-                data.forEach(element => {
-                    console.log("Hope it will work" + element.pushToken)
+
+                await Promise.all(data.map(async (data) => {
+                    console.log("Hope it will work" + data.pushToken)
                     var data = JSON.stringify({
                         "content_available": true,
                         "priority": "high",
-                        "to": element.pushToken,
+                        "to": data.pushToken,
                         "notification": {
                             "title": "Order Placed",
                             "body": "New order placed. Take ready :)"
@@ -99,7 +100,8 @@ router.post("/", async (req, res, next) => {
                         .catch(function (error) {
                             console.log(error);
                         });
-                });
+
+                  }));
 
             } else {
                 console.log("Data not found bro sorry")
