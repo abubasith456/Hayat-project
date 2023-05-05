@@ -4,17 +4,27 @@ var Banner = require('../models/banner');
 
 router.post("/", function (req, res) {
 
-    console.log(req);
+    console.log(req.body);
 
     try {
 
-        const banner = new Banner(req.body).save()
+        const banner = Banner({
+            _id: mongoose.Types.ObjectId(),
+            name: req.body.name,
+            percentage: req.body.percentage,
+            products: req.body.products,
+        });
 
-        if (banner != null) {
-            res.send("Success bro").status(200)
-        } else {
-            res.send("Failed bro").status(500)
-        }
+
+        banner.save()
+            .then(result => {
+                res.send("Success bro").status(200)
+            }).catch(err => {
+                console.log(err.message);
+                res.status(500).json({
+                    error: err
+                });
+            });
 
     } catch (e) {
         console.log(e)
