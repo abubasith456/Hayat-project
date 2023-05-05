@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 var Banner = require('../models/banner');
+const mongoose = require("mongoose");
 
 router.post("/", function (req, res) {
 
