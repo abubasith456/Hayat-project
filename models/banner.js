@@ -6,7 +6,7 @@ const bannerScheme = mongoose.Schema({
         type: String,
     },
     percentage: {
-        type: Number,
+        type: String,
     },
     products: [
         {
