@@ -22,6 +22,7 @@ const fruites = require("./routes/fruits");
 const dairy = require("./routes/dairy");
 const forgotPassword = require("./routes/forgotPassword")
 const fcm = require("./routes/fcm");
+const banner = require("./routes/banner");
 
 //Mongoes Db
 mongoose.connect('mongodb+srv://basith:basith@cluster0.fhejr.mongodb.net/RegisterLogin?retryWrites=true&w=majority', {
@@ -75,6 +76,7 @@ app.use("/dairy", dairy);
 app.use("/forgotPassword", forgotPassword);
 app.use("/changePassword", changePassword);
 app.use("/fcm", fcm);
+app.use("/banner", banner);
 
 
 
