@@ -11,7 +11,36 @@ userSchema = new Schema({
 	passwordConf: String,
 	pushToken: String,
 	token: String,
-	role: String
+	role: String,
+	address: [
+		{
+			name: {
+				type: String
+			},
+			userId: {
+				type: String
+			},
+			mobileNumber: {
+				type: String
+			},
+			pinCode: {
+				type: String
+			},
+			address: {
+				type: String
+			},
+			area: {
+				type: String
+			},
+			landMark: {
+				type: String
+			},
+			alterMobileNumber: {
+				type: String
+			}
+
+		}
+	]
 }),
 	User = mongoose.model('User', userSchema);
 
