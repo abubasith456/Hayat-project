@@ -95,3 +95,5 @@ router.delete("/:id", (req, res, next) => {
             res.status(500).send(failedResponse(err));
         });
 });
+
+module.exports = router;
