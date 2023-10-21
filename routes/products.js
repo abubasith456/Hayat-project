@@ -5,6 +5,8 @@ const multer = require('multer');
 const Product = require("../models/product");
 const { Category } = require("../models/category");
 
+const firebase = require("../utils/firebase")
+var imageUrl = ""
 
 //Disk storage where image store
 const storage = multer.diskStorage({
@@ -37,7 +39,16 @@ const upload = multer({
 });
 
 //Add products
-router.post("/", upload.single('productImage'), async (req, res, next) => {
+router.post("/", upload.single('file'), async (req, res, next) => {
+
+    await firebase.uploadFile(req.file.path, req.file.filename)
+    await firebase.generateSignedUrl(req.file.filename).then(res => {
+        imageUrl = res
+    })
+
+    if (imageUrl == "") {
+        imageUrl = req.file.path
+    }
 
     console.log(req.body)
     const product = Product({
@@ -45,7 +56,7 @@ router.post("/", upload.single('productImage'), async (req, res, next) => {
         name: req.body.name,
         price: req.body.price,
         description: req.body.description,
-        productImage: req.file.path,
+        productImage: imageUrl,
         isLiked: req.body.isLiked,
     });
     product
@@ -221,36 +232,36 @@ router.delete("/:id", (req, res) => {
 module.exports = router;
 
 
-    // Product.findOne({ _id: req.body.productId }, (err, data) => {
+// Product.findOne({ _id: req.body.productId }, (err, data) => {
 
-    //     if (!data) {
-    //         res.status(500).json({
-    //             err: 'Data not found'
-    //         });
-    //     } else {
-    //         data.Product = req.body.Product;
-    //         data.price = req.body.price;
+//     if (!data) {
+//         res.status(500).json({
+//             err: 'Data not found'
+//         });
+//     } else {
+//         data.Product = req.body.Product;
+//         data.price = req.body.price;
 
-    //         data.save(function (err, Person) {
-    //             if (err) {
-    //                 res.status(500).json({
-    //                     err: err
-    //                 })
-    //             } else {
-    //                 res.status(200).json({
-    //                     message: 'Product updated',
-    //                     request: {
-    //                         trype: 'GET',
-    //                         url: 'http://localhost:4000/products/' + data._id
-    //                     }
-    //                 })
-    //             }
-    //         });
+//         data.save(function (err, Person) {
+//             if (err) {
+//                 res.status(500).json({
+//                     err: err
+//                 })
+//             } else {
+//                 res.status(200).json({
+//                     message: 'Product updated',
+//                     request: {
+//                         trype: 'GET',
+//                         url: 'http://localhost:4000/products/' + data._id
+//                     }
+//                 })
+//             }
+//         });
 
-    //     }
-    // }).catch(err => {
-    //     console.log(err);
-    //     res.status(500).json({
-    //         error: err
-    //     });
-    // });
+//     }
+// }).catch(err => {
+//     console.log(err);
+//     res.status(500).json({
+//         error: err
+//     });
+// });

@@ -4,6 +4,9 @@ const mongoose = require("mongoose");
 const multer = require('multer');
 const Drinks = require("../models/drinks");
 
+const firebase = require("../utils/firebase")
+var imageUrl = ""
+
 //Disk storage where image store
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -33,10 +36,16 @@ const upload = multer({
 });
 
 //Add products
-router.post("/", upload.single('drinksImage'), async (req, res, next) => {
-    // const category = await Category.findById(req.body.category);
-    // console.log(category);
-    // if (!category) return res.status(400).send("Invalid Category");
+router.post("/", upload.single('file'), async (req, res) => {
+
+    await firebase.uploadFile(req.file.path, req.file.filename)
+    await firebase.generateSignedUrl(req.file.filename).then(res => {
+        imageUrl = res
+    })
+
+    if (imageUrl == "") {
+        imageUrl = req.file.path
+    }
 
     console.log(req.body)
     const drinks = Drinks({
@@ -44,7 +53,7 @@ router.post("/", upload.single('drinksImage'), async (req, res, next) => {
         name: req.body.name,
         price: req.body.price,
         description: req.body.description,
-        drinksImage: req.file.path,
+        drinksImage: imageUrl,
         isLiked: req.body.isLiked,
 
     });
@@ -70,12 +79,34 @@ router.post("/", upload.single('drinksImage'), async (req, res, next) => {
         })
         .catch(err => {
             console.log(err.message);
-            res.status(500).json({
-                error: err
-            });
+            res.status(500).send("Failed")
         });
 });
 
+async function uploadFile(filepath, filename) {
+    await bucket.upload(filepath, {
+        gzip: true,
+        destination: filename,
+        metadata: {
+            cacheControl: 'public, max-age=31536000'
+        }
+    });
+
+    console.log(`${filename} uploaded to bucket.`);
+}
+
+async function generateSignedUrl(filename) {
+    const options = {
+        version: 'v2',
+        action: 'read',
+        expires: date
+    };
+
+    const [url] = await bucket.file(filename).getSignedUrl(options);
+    imageUrl = url + ''
+    console.log(url);
+    return url
+};
 
 //Get products
 router.get("/", (req, res, next) => {

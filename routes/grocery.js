@@ -4,6 +4,9 @@ const mongoose = require("mongoose");
 const multer = require('multer');
 const Grocery = require("../models/gocery");
 
+const firebase = require("../utils/firebase")
+var imageUrl = ""
+
 //Disk storage where image store
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -27,16 +30,23 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
     storage: storage,
     limits: {
-        fileSize: 1024 * 1024 * 5
+        fileSize: 1024 * 1024 * 10
     },
     fileFilter: fileFilter
 });
 
 //Add products
-router.post("/", upload.single('groceryImage'), async (req, res, next) => {
-    // const category = await Category.findById(req.body.category);
-    // console.log(category);
-    // if (!category) return res.status(400).send("Invalid Category");
+router.post("/", upload.single('file'), async (req, res, next) => {
+
+
+    await firebase.uploadFile(req.file.path, req.file.filename)
+    await firebase.generateSignedUrl(req.file.filename).then(res => {
+        imageUrl = res
+    })
+
+    if (imageUrl == "") {
+        imageUrl = req.file.path
+    }
 
     console.log(req.body)
     const grocery = Grocery({
@@ -44,7 +54,7 @@ router.post("/", upload.single('groceryImage'), async (req, res, next) => {
         name: req.body.name,
         price: req.body.price,
         description: req.body.description,
-        groceryImage: req.file.path,
+        groceryImage: imageUrl,
         isLiked: req.body.isLiked,
 
     });

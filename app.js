@@ -24,6 +24,9 @@ const forgotPassword = require("./routes/forgotPassword")
 const fcm = require("./routes/fcm");
 const banner = require("./routes/banner");
 const address = require("./routes/address")
+const firebase = require("./utils/firebase")
+const post = require("./routes/post")
+const comment = require("./routes/comment")
 
 //Mongoes Db
 mongoose.connect('mongodb+srv://basith:basith@cluster0.fhejr.mongodb.net/RegisterLogin?retryWrites=true&w=majority', {
@@ -79,6 +82,8 @@ app.use("/changePassword", changePassword);
 app.use("/fcm", fcm);
 app.use("/banner", banner);
 app.use("/address", address);
+app.use("/post", post);
+app.use("/please", comment)
 
 
 
