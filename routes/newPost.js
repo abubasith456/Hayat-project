@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const multer = require('multer');
 const User = require('../models/user');
 const Post = require('../models/newPost');
-const fileUpload = require('../utils/fileUpload');
 const firebase = require("../utils/firebase")
 var imageUrl = ""
 
