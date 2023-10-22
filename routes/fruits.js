@@ -4,6 +4,9 @@ const mongoose = require("mongoose");
 const multer = require('multer');
 const Fruites = require("../models/fruits");
 
+const firebase = require("../utils/firebase")
+var imageUrl = ""
+
 //Disk storage where image store
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -33,10 +36,16 @@ const upload = multer({
 });
 
 //Add products
-router.post("/", upload.single('fruitImage'), async (req, res, next) => {
-    // const category = await Category.findById(req.body.category);
-    // console.log(category);
-    // if (!category) return res.status(400).send("Invalid Category");
+router.post("/", upload.single('file'), async (req, res, next) => {
+
+    await firebase.uploadFile(req.file.path, req.file.filename)
+    await firebase.generateSignedUrl(req.file.filename).then(res => {
+        imageUrl = res
+    })
+
+    if (imageUrl == "") {
+        imageUrl = req.file.path
+    }
 
     console.log(req.body)
     const fruites = Fruites({
@@ -44,7 +53,7 @@ router.post("/", upload.single('fruitImage'), async (req, res, next) => {
         name: req.body.name,
         price: req.body.price,
         description: req.body.description,
-        fruiteImage: req.file.path,
+        fruiteImage: imageUrl,
         isLiked: req.body.isLiked,
 
     });

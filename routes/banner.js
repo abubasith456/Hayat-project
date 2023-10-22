@@ -3,6 +3,9 @@ const router = express.Router();
 var Banner = require('../models/banner');
 const mongoose = require("mongoose");
 
+const firebase = require("../utils/firebase")
+var imageUrl = ""
+
 router.post("/", function (req, res) {
 
     console.log(req.body);
