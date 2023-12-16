@@ -28,3 +28,8 @@ function profileResponse(message, statusCode, data) {
         }
     }
 }
+
+module.exports = {
+    successResponse,
+    failedResponse
+}

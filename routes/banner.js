@@ -38,6 +38,31 @@ router.post("/", function (req, res) {
 
 });
 
+router.get("/", function (req, res) {
+    Banner.find()
+        .exec()
+        .then((data) => {
+            console.log(data)
+            try {
+                const response = {
+                    count: data.length,
+                    products: data
+                };
+                res.status(200).json(response);
+            } catch (e) {
+                res.status(400).json({
+                    error: e
+                });
+            }
+
+        })
+        .catch((error) => {
+            res.status(400).json({
+                error: error
+            });
+        })
+});
+
 module.exports = router;
 
 
