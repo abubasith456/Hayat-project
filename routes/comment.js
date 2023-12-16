@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
+const multer = require('multer');
 const User = require('../models/user');
 const Post = require('../models/postNews');
 const Comment = require('../models/comments');
-const response = require('../utils/responseModel');
 
 
 router.post('/', async (req, res) => {
@@ -37,20 +38,6 @@ router.post('/', async (req, res) => {
             })
         }
     });
-
-});
-
-
-router.delete('/:id', async (req, res) => {
-
-    Comment.remove({ _id: req.params.id })
-        .exec()
-        .then(result => {
-            res.status(200).send(response.successResponse(result));
-        })
-        .catch(error => {
-            res.send(500).send(response.failedResponse(error))
-        });
 
 });
 

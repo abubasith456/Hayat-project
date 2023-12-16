@@ -5,7 +5,6 @@ const multer = require('multer');
 const User = require('../models/user');
 const Post = require('../models/newPost');
 const Comment = require('../models/comments');
-const response = require('../utils/responseModel');
 
 
 
@@ -124,6 +123,7 @@ router.delete('/', async (req, res, next) => {
     post.commentsPost.length &&
         (await Comment.findByIdAndDelete(post.commentsPost[0]._id));
 
+    await deleteImageCloudinary(req.params.id);
     await post.remove();
 
     res.status(200).json({
@@ -159,19 +159,6 @@ router.post('/like', async (req, res, next) => {
         status: 'success',
         post,
     });
-});
-
-router.delete('/:id', async (req, res) => {
-
-    Comment.remove({ _id: req.params.id })
-        .exec()
-        .then(result => {
-            res.status(200).send(response.successResponse(result));
-        })
-        .catch(error => {
-            res.send(500).send(response.failedResponse(error))
-        });
-
 });
 
 module.exports = router;

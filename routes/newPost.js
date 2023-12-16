@@ -120,6 +120,7 @@ router.delete('/', async (req, res, next) => {
     post.commentsPost.length &&
         (await Comment.findByIdAndDelete(post.commentsPost[0]._id));
 
+    await deleteImageCloudinary(req.params.id);
     await post.remove();
 
     res.status(200).json({
