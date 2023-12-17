@@ -1,6 +1,40 @@
-const { Category } = require("../models/category");
+const Category = require("../models/category");
 const express = require("express");
+const { responseAddProduct, responseFetchProduct } = require("../utils/responseModel");
 const router = express.Router();
+const firebase = require("../utils/firebase");
+const { filePath } = require("../utils/upladImageUtils");
+const multer = require('multer');
+var imageUrl = ""
+
+
+//Disk storage where image store
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+
+//Check the image formate
+const fileFilter = (req, file, cb) => {
+    // reject a file
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+};
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 1024 * 1024 * 5
+    },
+    fileFilter: fileFilter
+});
 
 router.get("/", async (req, res) => {
     const categoryList = await Category.find();
@@ -27,18 +61,30 @@ router.get("/:id", async (req, res) => {
 
 
 //Add
-router.post("/", async (req, res) => {
+router.post("/", upload.single('file'), async (req, res) => {
+
+    await firebase.uploadFile(req.file.path, "Category/" + req.file.filename)
+    await firebase.generateSignedUrl(req.file.filename).then(res => {
+        imageUrl = res
+    })
+
+    if (imageUrl == "") {
+        imageUrl = req.file.path
+    }
+
     console.log(req.body);
     let category = new Category({
         name: req.body.name,
-        icon: req.body.icon,
-        color: req.body.color,
+        description: req.body.description,
+        image: imageUrl,
+        link: req.body.link,
     });
-    category = await category.save();
-
-    if (!category) return res.status(404).send("the category cannot be created!");
-
-    res.send(category);
+    category.save()
+        .then(result => {
+            res.status(200).send(responseFetchProduct(true, result))
+        }).catch(error => {
+            res.status(400).send(responseAddProduct(false,));
+        })
 });
 
 

@@ -1,22 +1,18 @@
 var mongoose = require('mongoose');
 
-const productSchema = mongoose.Schema({
+const driedNoodles = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     name: {
         type: String,
-        // required: true
     },
     price: {
         type: Number,
-        //  required: true
     },
     description: {
         type: String,
-        // required: true
     },
-    productImage: {
+    image: {
         type: String,
-        //  required: true 
     },
     isLiked: {
         type: Boolean,
@@ -24,4 +20,4 @@ const productSchema = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Product', productSchema);
+module.exports = mongoose.model('DriedNoodles', driedNoodles);
