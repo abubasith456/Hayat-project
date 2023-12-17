@@ -10,7 +10,7 @@ const date = new Date(d.setFullYear(d.getFullYear() + 200)).toString()
 
 async function uploadFile(filepath, filename) {
     console.log("File path =>" + filepath)
-    console.log("File name =>" + filepath)
+    console.log("File name =>" + filename)
     await bucket.upload(filepath, {
         gzip: true,
         destination: filename,

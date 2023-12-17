@@ -29,7 +29,43 @@ function profileResponse(message, statusCode, data) {
     }
 }
 
+
+function resposeLogin(success, message, data) {
+    return {
+        "success": success,
+        "message": message,
+        "data": data
+    }
+}
+
+function resposeRegistration(success, message, data) {
+    return {
+        "success": success,
+        "message": message,
+        "data": data
+    }
+}
+
+function responseAddProduct(success, message, error) {
+    return {
+        "success": success,
+        "message": message,
+        "errors": error
+    }
+}
+
+function responseFetchProduct(success, data) {
+    return {
+        "success": success,
+        "data": data
+    }
+}
+
 module.exports = {
     successResponse,
-    failedResponse
+    failedResponse,
+    resposeLogin,
+    resposeRegistration,
+    responseAddProduct,
+    responseFetchProduct,
 }

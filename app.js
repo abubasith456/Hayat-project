@@ -28,6 +28,10 @@ const firebase = require("./utils/firebase")
 const post = require("./routes/post")
 const newPost = require("./routes/newPost");
 const comment = require("./routes/cmd");
+const personalCare = require("./routes/personalCare");
+const healthCare = require("./routes/healthCare");
+const driedNoodles = require("./routes/driedNoodles");
+const home = require("./routes/home")
 
 //Mongoes Db
 mongoose.connect('mongodb+srv://basith:basith@cluster0.fhejr.mongodb.net/RegisterLogin?retryWrites=true&w=majority', {
@@ -85,7 +89,10 @@ app.use("/banner", banner);
 app.use("/address", address);
 app.use("/newPost", newPost);
 app.use("/cmd", comment);
-
+app.use("/personalCare", personalCare);
+app.use("/healthCare", healthCare);
+app.use("/driedNoodles", driedNoodles);
+app.use("/home", home)
 
 
 //Error catch
@@ -106,25 +113,3 @@ app.use((error, req, res, next) => {
 });
 
 module.exports = app;
-
-
-//To check the connection connected or not
-// router.get('/', function (req, res, next) {
-// 	// return res.render('index.ejs');
-// 	return res.json(successResponse("Success"))
-// },
-// 	e => res.json(failedResponse(e))
-// );
-
-//Forgot password
-// router.get('/forgetpass', function (req, res, next) {
-// 	res.render("forget.ejs");
-// });
-
-//Login connection check
-// router.get('/login', function (req, res, next) {
-// 	// return res.render('login.ejs');
-// 	return res.json(successResponse("Success"))
-// },
-// 	e => res.json(failedResponse(e))
-// );
