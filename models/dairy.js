@@ -11,7 +11,7 @@ const diaryScheme = mongoose.Schema({
     description: {
         type: String,
     },
-    dairyImage: {
+    image: {
         type: String,
     },
     isLiked: {

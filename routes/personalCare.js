@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const multer = require('multer');
 const PersonalCare = require("../models/personalCare");
 const { responseAddProduct, responseFetchProduct } = require("../utils/responseModel");
-
 const firebase = require("../utils/firebase")
 var imageUrl = ""
 
@@ -40,7 +39,7 @@ const upload = multer({
 router.post("/", upload.single('file'), async (req, res, next) => {
 
     await firebase.uploadFile(req.file.path, "PersonalCare/" + req.file.filename)
-    await firebase.generateSignedUrl(req.file.filename).then(res => {
+    await firebase.generateSignedUrl("PersonalCare/" + req.file.filename).then(res => {
         imageUrl = res
     })
 
@@ -75,7 +74,6 @@ router.post("/", upload.single('file'), async (req, res, next) => {
 //Get products
 router.get("/", (req, res, next) => {
     PersonalCare.find()
-        .select("name price description _id fruiteImage isLiked")
         .exec()
         .then(result => {
             res.status(200).send(responseFetchProduct(true, result));
@@ -99,19 +97,11 @@ router.put('/:id', upload.single('fruitImage'), async (req, res) => {
     PersonalCare.updateOne({ _id: id }, { $set: updateOps })
         .exec()
         .then(result => {
-            res.status(200).json({
-                message: 'Product updated',
-                request: {
-                    type: 'GET',
-                    url: 'http://localhost:4000/products/' + id
-                }
-            });
+            res.status(200).send(responseFetchProduct(true, result));
         })
         .catch(err => {
             console.log(err);
-            res.status(500).json({
-                error: err
-            });
+            res.status(500).send(responseFetchProduct(false, err));
         });
 });
 
@@ -121,20 +111,11 @@ router.delete("/:id", (req, res) => {
     PersonalCare.deleteOne({ _id: id })
         .exec()
         .then(result => {
-            res.status(200).json({
-                message: 'Fruit item deleted',
-                request: {
-                    type: 'POST',
-                    url: 'http://localhost:3000/products',
-                    body: { name: 'String', price: 'Number' }
-                }
-            });
+            res.status(200).send(responseFetchProduct(true, result));
         })
         .catch(err => {
             console.log(err);
-            res.status(500).json({
-                error: err
-            });
+            res.status(500).send(responseFetchProduct(false, err));
         });
 });
 

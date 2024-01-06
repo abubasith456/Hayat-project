@@ -11,7 +11,7 @@ var imageUrl = ""
 //Disk storage where image store
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, './uploads');
+        cb(null, './uploads/healthCare');
     },
     filename: function (req, file, cb) {
         cb(null, file.originalname);
@@ -40,7 +40,7 @@ const upload = multer({
 router.post("/", upload.single('file'), async (req, res, next) => {
 
     await firebase.uploadFile(req.file.path, "HealthCare/" + req.file.filename)
-    await firebase.generateSignedUrl(req.file.filename).then(res => {
+    await firebase.generateSignedUrl("HealthCare/" + req.file.filename).then(res => {
         imageUrl = res
     })
 
@@ -75,7 +75,6 @@ router.post("/", upload.single('file'), async (req, res, next) => {
 //Get products
 router.get("/", (req, res, next) => {
     HealthCare.find()
-        .select("name price description _id fruiteImage isLiked")
         .exec()
         .then(result => {
             res.status(200).send(responseFetchProduct(true, result));
@@ -87,7 +86,7 @@ router.get("/", (req, res, next) => {
 });
 
 //Update products
-router.put('/:id', upload.single('fruitImage'), async (req, res) => {
+router.put('/:id', upload.single('file'), async (req, res) => {
     const id = req.params.id;
     console.log(req.body);
     const updateOps = {};
@@ -99,19 +98,11 @@ router.put('/:id', upload.single('fruitImage'), async (req, res) => {
     HealthCare.updateOne({ _id: id }, { $set: updateOps })
         .exec()
         .then(result => {
-            res.status(200).json({
-                message: 'Product updated',
-                request: {
-                    type: 'GET',
-                    url: 'http://localhost:4000/products/' + id
-                }
-            });
+            res.status(200).send(responseFetchProduct(true, result));
         })
         .catch(err => {
             console.log(err);
-            res.status(500).json({
-                error: err
-            });
+            res.status(500).send(responseFetchProduct(false, err));
         });
 });
 
@@ -121,20 +112,11 @@ router.delete("/:id", (req, res) => {
     HealthCare.deleteOne({ _id: id })
         .exec()
         .then(result => {
-            res.status(200).json({
-                message: 'Fruit item deleted',
-                request: {
-                    type: 'POST',
-                    url: 'http://localhost:3000/products',
-                    body: { name: 'String', price: 'Number' }
-                }
-            });
+            res.status(200).send(responseFetchProduct(true, result));
         })
         .catch(err => {
             console.log(err);
-            res.status(500).json({
-                error: err
-            });
+            res.status(500).send(responseFetchProduct(false, err));
         });
 });
 

@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-const drinksScheme = mongoose.Schema({
+const babyItems = mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     name: {
         type: String,
@@ -20,4 +20,4 @@ const drinksScheme = mongoose.Schema({
     }
 });
 
-module.exports = mongoose.model('Drinks', drinksScheme);
+module.exports = mongoose.model('BabyItems', babyItems);

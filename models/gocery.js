@@ -11,7 +11,7 @@ const groceryScheme = mongoose.Schema({
     description: {
         type: String,
     },
-    groceryImage: {
+    image: {
         type: String,
     },
     isLiked: {

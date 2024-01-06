@@ -11,7 +11,7 @@ const vegetablesSchema = mongoose.Schema({
     description: {
         type: String,
     },
-    vegetableImage: {
+    image: {
         type: String,
     },
     isLiked: {

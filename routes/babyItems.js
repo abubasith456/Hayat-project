@@ -2,10 +2,9 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require('multer');
-const DriedNoodles = require("../models/DriedNoodles")
 const { responseAddProduct, responseFetchProduct } = require("../utils/responseModel");
-
-const firebase = require("../utils/firebase")
+const firebase = require("../utils/firebase");
+const BabyItems = require("../models/BabyItems");
 var imageUrl = ""
 
 //Disk storage where image store
@@ -39,8 +38,8 @@ const upload = multer({
 //Add products
 router.post("/", upload.single('file'), async (req, res, next) => {
 
-    await firebase.uploadFile(req.file.path, "DriedNoodles/" + req.file.filename)
-    await firebase.generateSignedUrl("DriedNoodles/" + req.file.filename).then(res => {
+    await firebase.uploadFile(req.file.path, "BabyItems/" + req.file.filename)
+    await firebase.generateSignedUrl("BabyItems/" + req.file.filename).then(res => {
         imageUrl = res
     })
 
@@ -49,7 +48,7 @@ router.post("/", upload.single('file'), async (req, res, next) => {
     }
 
     console.log(req.body)
-    const fruites = DriedNoodles({
+    const babyItems = BabyItems({
         _id: mongoose.Types.ObjectId(),
         name: req.body.name,
         price: req.body.price,
@@ -58,7 +57,7 @@ router.post("/", upload.single('file'), async (req, res, next) => {
         isLiked: req.body.isLiked,
 
     });
-    fruites
+    babyItems
         .save()
         .then(result => {
             console.log(result);
@@ -74,7 +73,7 @@ router.post("/", upload.single('file'), async (req, res, next) => {
 
 //Get products
 router.get("/", (req, res, next) => {
-    DriedNoodles.find()
+    BabyItems.find()
         .exec()
         .then(result => {
             res.status(200).send(responseFetchProduct(true, result));
@@ -95,30 +94,45 @@ router.put('/:id', upload.single('fruitImage'), async (req, res) => {
     }
 
     console.log(updateOps);
-    DriedNoodles.updateOne({ _id: id }, { $set: updateOps })
+    BabyItems.updateOne({ _id: id }, { $set: updateOps })
         .exec()
         .then(result => {
-            res.status(200).send(
-                responseFetchProduct(true, result));
+            res.status(200).json({
+                message: 'Product updated',
+                request: {
+                    type: 'GET',
+                    url: 'http://localhost:4000/products/' + id
+                }
+            });
         })
         .catch(err => {
             console.log(err);
-            res.status(500).send(responseFetchProduct(false, err));
+            res.status(500).json({
+                error: err
+            });
         });
 });
 
 //Delete products
 router.delete("/:id", (req, res) => {
     const id = req.params.id;
-    DriedNoodles.deleteOne({ _id: id })
+    BabyItems.deleteOne({ _id: id })
         .exec()
         .then(result => {
-            res.status(200).send(
-                responseFetchProduct(true, result));
+            res.status(200).json({
+                message: 'Fruit item deleted',
+                request: {
+                    type: 'POST',
+                    url: 'http://localhost:3000/products',
+                    body: { name: 'String', price: 'Number' }
+                }
+            });
         })
         .catch(err => {
             console.log(err);
-            res.status(500).send(responseFetchProduct(false, err));
+            res.status(500).json({
+                error: err
+            });
         });
 });
 
