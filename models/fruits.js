@@ -11,7 +11,7 @@ const fruitsScheme = mongoose.Schema({
     description: {
         type: String,
     },
-    fruiteImage: {
+    image: {
         type: String,
     },
     isLiked: {

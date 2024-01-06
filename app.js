@@ -1,9 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var app = express();
+const http = require('http');
 var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 const morgan = require('morgan');
+const socketIO = require('socket.io');
+const server = http.createServer(app);
+const io = socketIO(server);
 
 
 //Routes
@@ -32,6 +36,7 @@ const personalCare = require("./routes/personalCare");
 const healthCare = require("./routes/healthCare");
 const driedNoodles = require("./routes/driedNoodles");
 const home = require("./routes/home")
+const babyItems = require("./routes/babyItems")
 
 //Mongoes Db
 mongoose.connect('mongodb+srv://basith:basith@cluster0.fhejr.mongodb.net/RegisterLogin?retryWrites=true&w=majority', {
@@ -93,6 +98,7 @@ app.use("/personalCare", personalCare);
 app.use("/healthCare", healthCare);
 app.use("/driedNoodles", driedNoodles);
 app.use("/home", home)
+app.use("/babyItems", babyItems)
 
 
 //Error catch
