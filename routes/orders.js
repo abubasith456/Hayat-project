@@ -101,7 +101,7 @@ router.post("/", async (req, res, next) => {
                             console.log(error);
                         });
 
-                  }));
+                }));
 
             } else {
                 console.log("Data not found bro sorry")
@@ -215,7 +215,7 @@ router.get("/:unique_id", async (req, res, next) => {
 router.get("/", async (req, res) => {
     try {
         const orders = await Order.find();
-        res.status(200).json(orders);
+        res.status(200).json("DATA");
     } catch (err) {
         res.status(500).json(err);
     }
