@@ -78,11 +78,11 @@ router.post('/push', function (req, res) {
 
     fcm.send(message, function (err, response) {
         if (err) {
-            res.send("Something has gone wrong!");
+            res.status(400).send("Something has gone wrong! => " + err);
             console.log("Something has gone wrong! " + err);
         } else {
             console.log();
-            res.send("Successfully sent with response: ", response);
+            res.status(200).send("Pushed");
         }
     });
 
