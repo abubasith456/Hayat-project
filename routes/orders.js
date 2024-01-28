@@ -6,6 +6,7 @@ const Order = require("../models/order");
 const Product = require("../models/product");
 var User = require('../models/user');
 const pushApi = "https://fcm.googleapis.com/fcm/send";
+const { responseAddProduct, responseFetchProduct } = require("../utils/responseModel");
 
 function successResponse(message) {
     return {
@@ -108,10 +109,10 @@ router.post("/", async (req, res, next) => {
             }
         });
 
-        res.status(200).json(orders);
+        res.status(200).json(responseAddProduct(true, "Order placed!"));
 
     } catch (err) {
-        res.status(500).json(err);
+        res.status(500).json(responseAddProduct(false, err));
     }
 });
 
