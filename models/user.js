@@ -12,6 +12,7 @@ userSchema = new Schema({
 	pushToken: String,
 	token: String,
 	role: String,
+	profilePic: String,
 	address: [
 		{
 			name: {
