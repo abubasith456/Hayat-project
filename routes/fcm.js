@@ -82,7 +82,7 @@ router.post('/push', function (req, res) {
             console.log("Something has gone wrong! " + err);
         } else {
             console.log();
-            res.status(200).send("Pushed");
+            res.status(200).send(response);
         }
     });
 

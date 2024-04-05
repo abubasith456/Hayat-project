@@ -1,9 +1,9 @@
 var express = require('express');
 var router = express.Router();
-var app = express();
 var User = require('../models/user');
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const multer = require('multer');
+const firebase = require("../utils/firebase")
+var imageUrl = ""
 
 function successResponse(message) {
     return {
@@ -21,34 +21,65 @@ function failedResponse(message) {
     }
 }
 
-function profileResponse(message, statusCode, data) {
-    return {
-        "status": statusCode,
-        "connection": "Connected",
-        "message": message,
-        "userData": {
-            "user_id": data.unique_id,
-            "username": data.username,
-            "email": data.email,
-            "dateOfBirth": data.dateOfBirth,
-            "mobileNumber": data.mobileNumber
-        }
+//Disk storage where image store
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
     }
-}
+});
+
+//Check the image formate
+const fileFilter = (req, file, cb) => {
+    // reject a file
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'image/jpg') {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+};
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 1024 * 1024 * 5
+    },
+    fileFilter: fileFilter
+});
 
 
 //Update profile and watch
 router.post('/', async function (req, res, next) {
 
-    User.findOne({ unique_id: req.body.userId }, function (err, data) {
+    User.findOne({ unique_id: req.body.userId }, async function (err, data) {
         if (!data) {
 
             res.send(failedResponse('Session expired!'))
         } else {
 
-            data.username = req.body.username;
-            data.dateOfBirth = req.body.dateOfBirth;
-            data.mobileNumber = req.body.mobileNumber;
+            if (req.file) {
+                await firebase.uploadFile(req.file.path, "ProfilePictures/" + req.file.filename)
+                await firebase.generateSignedUrl("ProfilePictures/" + req.file.filename).then(res => {
+                    imageUrl = res
+                })
+            
+                if (imageUrl == "") {
+                    data.profilePic = req.file.path
+                }
+            }
+
+            if (req.body.username) {
+                data.username = req.body.username;
+            }
+            if (req.body.dateOfBirth) {
+                data.dateOfBirth = req.body.dateOfBirth;
+            }
+            if (req.body.mobileNumber) {
+                data.mobileNumber = req.body.mobileNumber;
+            }
+
 
             data.save(function (err, Person) {
                 if (err) {
