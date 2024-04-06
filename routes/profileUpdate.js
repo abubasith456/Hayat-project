@@ -5,11 +5,12 @@ const multer = require('multer');
 const firebase = require("../utils/firebase")
 var imageUrl = ""
 
-function successResponse(message) {
+function successResponse(message, data) {
     return {
         "status": 200,
         "connection": "Connected",
-        "message": message
+        "message": message,
+        "data": data,
     }
 }
 
@@ -51,50 +52,46 @@ const upload = multer({
 
 
 //Update profile and watch
-router.post('/', async function (req, res, next) {
+router.post('/', upload.single('file'), async (req, res) => {
+    try {
+        const user = await User.findOne({ unique_id: req.body.userId });
 
-    User.findOne({ unique_id: req.body.userId }, async function (err, data) {
-        if (!data) {
-
-            res.send(failedResponse('Session expired!'))
-        } else {
-
-            if (req.file) {
-                await firebase.uploadFile(req.file.path, "ProfilePictures/" + req.file.filename)
-                await firebase.generateSignedUrl("ProfilePictures/" + req.file.filename).then(res => {
-                    imageUrl = res
-                })
-            
-                if (imageUrl == "") {
-                    data.profilePic = req.file.path
-                }
-            }
-
-            if (req.body.username) {
-                data.username = req.body.username;
-            }
-            if (req.body.dateOfBirth) {
-                data.dateOfBirth = req.body.dateOfBirth;
-            }
-            if (req.body.mobileNumber) {
-                data.mobileNumber = req.body.mobileNumber;
-            }
-
-
-            data.save(function (err, Person) {
-                if (err) {
-                    console.log(err);
-                    res.send(failedResponse(err))
-                }
-                else {
-                    console.log('Update successs');
-                    res.send(successResponse('Profile updated!'));
-                }
-            })
+        if (!user) {
+            return res.send(failedResponse('User not found!'));
         }
 
-    });
+        if (req.file) {
+            // Upload the file to Firebase Storage
+            await firebase.uploadFile(req.file.path, "ProfilePictures/" + req.file.filename);
 
+            // Generate a signed URL for the uploaded file
+            const imageUrl = await firebase.generateSignedUrl("ProfilePictures/" + req.file.filename);
+
+            // Update profilePic only if imageUrl is not empty
+            if (imageUrl) {
+                user.profilePic = imageUrl;
+            } else {
+                user.profilePic = req.file.path;
+            }
+        }
+
+        if (req.body.username) {
+            user.username = req.body.username;
+        }
+        if (req.body.dateOfBirth) {
+            user.dateOfBirth = req.body.dateOfBirth;
+        }
+        if (req.body.mobileNumber) {
+            user.mobileNumber = req.body.mobileNumber;
+        }
+
+        await user.save();
+        console.log('Profile updated successfully');
+        res.send(successResponse('Profile updated!', { profileUrl: user.profilePic }));
+    } catch (error) {
+        console.error('Error updating profile:', error);
+        res.send(failedResponse(error));
+    }
 });
 
 module.exports = router;
