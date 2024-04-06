@@ -26,13 +26,7 @@ function profileResponse(message, statusCode, data) {
         "status": statusCode,
         "connection": "Connected",
         "message": message,
-        "userData": {
-            "user_id": data.unique_id,
-            "username": data.username,
-            "email": data.email,
-            "dateOfBirth": data.dateOfBirth,
-            "mobileNumber": data.mobileNumber
-        }
+        "data": data,
     }
 }
 
