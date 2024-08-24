@@ -1,93 +1,124 @@
 var express = require('express');
 var router = express.Router();
-var app = express();
 var User = require('../models/user');
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcrypt');
+const { OAuth2Client } = require('google-auth-library');
+require('dotenv').config();
+const googleClientId = process.env.GOOGLE_ID;
+const { profileResponse, failedResponse } = require('../utils/responseModel');
+const verifyGoogleToken = require('../core/auth');
 
-function failedResponse(message) {
-    return {
-        "status": 400,
-        "connection": "Dissconnected",
-        "message": message,
-    }
+const client = new OAuth2Client(googleClientId);
+
+// Utility function to generate unique_id
+async function generateUniqueId() {
+    const lastUser = await User.findOne({}).sort({ _id: -1 }).limit(1);
+    return lastUser ? lastUser.unique_id + 1 : 1;
 }
 
+// Email/Password Registration
+router.post('/email', async function (req, res) {
+    const { email, password, passwordConf, username, dateOfBirth } = req.body;
 
-function registerSccess(message, statusCode, data) {
-    return {
-        "status": statusCode,
-        "connection": "Connected",
-        "message": message,
-        "userData": {
-            "user_id": data.unique_id,
-            "username": data.username,
-            "email": data.email,
-            "dateOfBirth": data.dateOfBirth,
-            "mobileNumber": data.mobileNumber,
-            "role": data.role
+    if (!email || !username || !password || !passwordConf) {
+        return res.status(400).send(failedResponse('Please provide all required information'));
+    }
+
+    if (password !== passwordConf) {
+        return res.status(400).send(failedResponse('Passwords do not match'));
+    }
+
+    try {
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).send(failedResponse('Email is already registered'));
         }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const unique_id = await generateUniqueId();
+
+        const newUser = new User({
+            unique_id,
+            email,
+            username,
+            dateOfBirth,
+            password: hashedPassword,
+            role: 'user'
+        });
+
+        await newUser.save();
+        res.send(profileResponse('Email registration successful.', 200, newUser));
+    } catch (error) {
+        res.status(500).send(failedResponse('Error registering user: ' + error.message));
     }
-}
+});
 
+// Mobile Number Registration
+router.post('/mobile', async function (req, res) {
+    const { mobileNumber, password, passwordConf, username, dateOfBirth } = req.body;
 
-//Register user
-router.post('/', async function (req, res, next) {
+    if (!mobileNumber || !username || !password || !passwordConf) {
+        return res.status(400).send(failedResponse('Please provide all required information'));
+    }
 
-    console.log(req.body);
-    var value = req.body;
+    if (password !== passwordConf) {
+        return res.status(400).send(failedResponse('Passwords do not match'));
+    }
 
-    // generate salt to hash password
-    const salt = await bcrypt.genSalt(10);
-    // now we set user password to hashed password
-    const password = await bcrypt.hash(value.password, salt);
+    try {
+        const existingUser = await User.findOne({ mobileNumber });
+        if (existingUser) {
+            return res.status(400).send(failedResponse('Mobile number is already registered'));
+        }
 
-    if (!value.email || !value.username || !value.password || !value.passwordConf) {
-        res.status(400).send('Please give the all information');
-    } else {
-        if (value.password == value.passwordConf) {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const unique_id = await generateUniqueId();
 
-            User.findOne({ email: value.email }, function (err, data) {
-                if (!data) {
-                    var id;
-                    User.findOne({}, function (err, data) {
+        const newUser = new User({
+            unique_id,
+            mobileNumber,
+            username,
+            dateOfBirth,
+            password: hashedPassword,
+            role: 'user'
+        });
 
-                        //Generate unique_id
-                        if (data) {
-                            console.log("unique_id generated");
-                            id = data.unique_id + 1;
-                        } else {
-                            id = 1;
-                        }
+        await newUser.save();
+        res.send(profileResponse('Mobile number registration successful.', 200, newUser));
+    } catch (error) {
+        res.status(500).send(failedResponse('Error registering user: ' + error.message));
+    }
+});
 
-                        var newPerson = new User({
-                            unique_id: id,
-                            email: value.email,
-                            username: value.username,
-                            dateOfBirth: value.dateOfBirth,
-                            mobileNumber: value.mobileNumber,
-                            password: password,
-                            passwordConf: value.passwordConf,
-                            role: "customer"
-                        });
+// Google Registration
+router.post('/google', async function (req, res) {
+    const { googleToken } = req.body;
 
-                        newPerson.save(function (err, Person) {
-                            if (err)
-                                console.log(err);
-                            else
-                                console.log('Success');
-                            res.send(registerSccess("Registered Successfully.", 200, newPerson));
-                        });
+    if (!googleToken) {
+        return res.status(400).send(failedResponse('ID Token is required'));
+    }
 
-                    }).sort({ _id: -1 }).limit(1);
+    try {
+        const googleUser = await verifyGoogleToken(googleToken);
+        const { email, name, id } = googleUser;
 
-                } else {
-                    res.send(failedResponse('Email is already registered'));
-                }
-
+        let user = await User.findOne({ email });
+        if (!user) {
+            const unique_id = await generateUniqueId();
+            user = new User({
+                unique_id,
+                email,
+                username: name,
+                role: 'user',
+                googleId: id
             });
-        } else {
-            res.send(failedResponse('password is not matched'));
+
+            await user.save();
         }
+
+        res.send(profileResponse('Google registration successful.', 200, user));
+    } catch (error) {
+        res.status(500).send(failedResponse('Error registering user with Google: ' + error.message));
     }
 });
 

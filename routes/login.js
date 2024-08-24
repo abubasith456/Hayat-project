@@ -1,111 +1,63 @@
 var express = require('express');
 var router = express.Router();
-var app = express();
 var User = require('../models/user');
 const bcrypt = require("bcrypt");
-// var admin = require("firebase-admin");
-// var fcm = require("fcm-notification");
-// var serviceAccount = require("../push-notification-key.json");
-// var credPath = admin.credential.cert(serviceAccount);
-// var FCM = new fcm(credPath);
+const { profileResponse, failedResponse } = require('../utils/responseModel');
+const verifyGoogleToken = require('../core/auth');
 
+// Middleware to parse JSON bodies
+router.use(express.json());
 
-function successResponse(message, data) {
-    return {
-        "status": 200,
-        "connection": "Connected",
-        "message": message,
-        "userData": {
-            "user_id": data.unique_id,
-            "username": data.username,
-            "email": data.email,
-            "dateOfBirth": data.dateOfBirth,
-            "mobileNumber": data.mobileNumber,
-            "role": data.role
-        }
+// Login user
+router.post('/', async function (req, res, next) {
+    const { email, mobileNumber, password, googleToken } = req.body;
+
+    // Validate input
+    if (!email && !mobileNumber && !googleToken) {
+        return res.status(400).send(failedResponse('Please provide email, mobile number, or Google token.'));
     }
-}
 
-function failedResponse(message) {
-    return {
-        "status": 500,
-        "connection": "Connected",
-        "message": message,
-        "userData": {
+    try {
+        let user;
+        // If Google token is provided, handle Google login
+        if (googleToken) {
+            // Verify Google token and get user information (implementation varies)
+            const googleUser = await verifyGoogleToken(googleToken); // Implement this function
+            user = await User.findOne({ googleId: googleUser.id }); // Adjust field based on your schema
 
-        }
-    }
-}
-
-// router.post('/send', function (req, res) {
-//     try {
-//         let message = {
-//             notification: {
-//                 title: "Test",
-//                 body: "Test body"
-
-//             },
-//             data: {
-//                 orderId: "123444",
-//             },
-//             token: "f42QVjpxSiSCTExP1R5f2R:APA91bFfOHC58Jm4dsclBrbl4-6Pn4HF4wtKjikueZaJItXHbHQO1uzFS5yMvyt0_M4gE573egpVBXgACTXZ4fCVs_hJjmwWfY3-2ZWmK7brWQjFy_U29DuMGotKttPucuGKERnQDBSM",
-
-//         }
-
-//         FCM.send(message, function (err, res) {
-//             if (err) {
-//                 res.status(500).json(err);
-//             } else {
-//                 res.status(200).json(err);
-//             }
-//         });
-//     } catch (err) {
-//         res.status(500).json(err);
-//     }
-// });
-
-//Login user
-router.post('/', function (req, res, next) {
-
-    var value = req.body;
-
-    if (!value.email || !value.password) {
-        res.status('Please give the all information')
-    } else {
-        User.findOne({ email: value.email }, async function (err, data) {
-            if (data) {
-
-                //Validate password.
-                const validPassword = await bcrypt.compare(value.password, data.password);
-
-                if (validPassword) {
-
-                    req.userId = data.unique_id;
-                    //console.log(req.session.userId);
-                    console.log(data);
-                    // var data = {
-                    //     "status": 200,
-                    //     "connection": "Connected",
-                    //     "message": "Login success",
-                    //     "userData": {
-                    //         "user_id": data.unique_id,
-                    //         "username": data.username,
-                    //         "email": data.email,
-                    //         "dateOfBirth": data.dateOfBirth,
-                    //         "mobileNumber": data.mobileNumber
-                    //     }
-                    // }
-                    // res.send(profileResponse('Login Success', 200, data));
-                    res.send(successResponse("Login success", data));
-                } else {
-                    res.send(failedResponse('Wrong password!'));
-                }
-            } else {
-                res.send(failedResponse('This Email Is not regestered!'));
+            if (!user) {
+                return res.status(404).send(failedResponse('Google user not found.'));
             }
-        });
-    }
+        } else {
+            // Handle email or mobile number login
+            if (email) {
+                user = await User.findOne({ email });
+            } else if (mobileNumber) {
+                user = await User.findOne({ mobileNumber });
+            }
 
+            if (!user) {
+                return res.status(404).send(failedResponse('User not found.'));
+            }
+
+            // Validate password if email or mobile number is used
+            if (password) {
+                const validPassword = await bcrypt.compare(password, user.password);
+                if (!validPassword) {
+                    return res.status(400).send(failedResponse('Wrong password.'));
+                }
+            }
+        }
+
+        // Success
+        req.userId = user.unique_id; // Set user ID in session or handle as needed
+        console.log(user);
+        res.status(200).send(profileResponse("Login successful", 200, user));
+    } catch (err) {
+        // Handle errors
+        console.error(err);
+        res.status(500).send(failedResponse('Internal server error.'));
+    }
 });
 
 module.exports = router;

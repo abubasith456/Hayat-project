@@ -2,12 +2,8 @@ var express = require('express');
 var router = express.Router();
 var app = express();
 const http = require('http');
-var mongoose = require('mongoose');
 var bodyParser = require('body-parser');
 const morgan = require('morgan');
-const socketIO = require('socket.io');
-const server = http.createServer(app);
-const io = socketIO(server);
 
 
 //Routes
@@ -38,19 +34,19 @@ const driedNoodles = require("./routes/driedNoodles");
 const home = require("./routes/home")
 const babyItems = require("./routes/babyItems")
 
-//Mongoes Db
-mongoose.connect('mongodb+srv://basith:basith@cluster0.fhejr.mongodb.net/RegisterLogin?retryWrites=true&w=majority', {
-	useNewUrlParser: true,
-	useUnifiedTopology: true
-}, (err) => {
-	if (!err) {
-		console.log('MongoDB Connection Succeeded.');
-	} else {
-		console.log('Error in DB connection : ' + err);
-	}
-});
+// //Mongoes Db
+// mongoose.connect('mongodb+srv://basith:basith@cluster0.fhejr.mongodb.net/RegisterLogin?retryWrites=true&w=majority', {
+// 	useNewUrlParser: true,
+// 	useUnifiedTopology: true
+// }, (err) => {
+// 	if (!err) {
+// 		console.log('MongoDB Connection Succeeded.');
+// 	} else {
+// 		console.log('Error in DB connection : ' + err);
+// 	}
+// });
 
-mongoose.Promise = global.Promise;
+// mongoose.Promise = global.Promise;
 
 
 //Setting the requestParse

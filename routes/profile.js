@@ -1,24 +1,22 @@
-var express = require('express');
-var router = express.Router();
-var app = express();
-var User = require('../models/user');
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+const express = require('express');
+const router = express.Router();
+const User = require('../models/user');
 
+// Utility functions for responses
 function successResponse(message) {
     return {
         "status": 200,
         "connection": "Connected",
         "message": message
-    }
+    };
 }
 
 function failedResponse(message) {
     return {
         "status": 400,
-        "connection": "Dissconnected",
+        "connection": "Disconnected",
         "message": message
-    }
+    };
 }
 
 function profileResponse(message, statusCode, data) {
@@ -27,23 +25,41 @@ function profileResponse(message, statusCode, data) {
         "connection": "Connected",
         "message": message,
         "data": data,
-    }
+    };
 }
 
+// Profile API to fetch user profile data
+router.post('/', async (req, res) => {
+    try {
+        const { userId } = req.body;
+        const user = await User.findOne({ unique_id: userId });
 
-// //Watch your profile
-router.post('/', function (req, res, next) {
-
-    User.findOne({ unique_id: req.body.userId }, function (err, data) {
-
-        if (!data) {
-            res.send(failedResponse('Data not found!'))
-        } else {
-
-            res.send(profileResponse('Success', 200, data))
-
+        if (!user) {
+            return res.status(404).send(failedResponse('Data not found!'));
         }
-    });
+
+        res.status(200).send(profileResponse('Success', 200, user));
+    } catch (err) {
+        console.error('Error fetching profile data:', err);
+        res.status(500).send(failedResponse('Internal Server Error'));
+    }
+});
+
+// User Role API to fetch user role based on userId
+router.get('/userRole', async (req, res) => {
+    try {
+        const { userId } = req.query;
+        const user = await User.findOne({ unique_id: userId });
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.json({ role: user.role });
+    } catch (error) {
+        console.error('Error fetching user role:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 module.exports = router;
