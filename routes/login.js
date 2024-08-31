@@ -23,7 +23,13 @@ router.post('/', async function (req, res, next) {
         if (googleToken) {
             // Verify Google token and get user information (implementation varies)
             const googleUser = await verifyGoogleToken(googleToken); // Implement this function
-            user = await User.findOne({ googleId: googleUser.id }); // Adjust field based on your schema
+            await User.findOne({ googleId: googleUser.id }, function (err, userData) {
+                if (userData) {
+                    user = userData
+                } else {
+                    return res.status(404).send(failedResponse(err));
+                }
+            }); // Adjust field based on your schema
 
             if (!user) {
                 return res.status(404).send(failedResponse('Google user not found.'));
