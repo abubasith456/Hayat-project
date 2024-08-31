@@ -23,7 +23,9 @@ router.post('/', async function (req, res, next) {
         if (googleToken) {
             // Verify Google token and get user information (implementation varies)
             const googleUser = await verifyGoogleToken(googleToken); // Implement this function
+            console.log("Google user = " + googleUser.name);
             await User.findOne({ googleId: googleUser.id }, function (err, userData) {
+                console.log(userData);
                 if (userData) {
                     user = userData
                 } else {
