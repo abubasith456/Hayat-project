@@ -10,7 +10,7 @@ const server = http.createServer(app);
 const mongoURI = process.env.MONGODB_URI;
 
 // Connect to MongoDB
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(mongoURI)
   .then(() => console.log('MongoDB connected successfully'))
   .catch(error => console.error('MongoDB connection error:', error));
 
