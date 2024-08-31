@@ -67,7 +67,7 @@ router.post('/', async function (req, res, next) {
             }
 
             if (!user) {
-                return res.status(404).send(failedResponse('User not found.'));
+                return res.status(201).send(failedResponse('User not found.'));
             }
 
             // Validate password if email or mobile number is used

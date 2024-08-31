@@ -70,7 +70,7 @@ router.post('/', async (req, res, next) => {
                     console.log(mailOptions);
                     transporter.sendMail(mailOptions, (error, info) => {
                         if (error) {
-                            res.status(400).send(failedResponse(error));
+                            res.status(201).send(failedResponse(error));
                             console.log('Error found' + error);
                         } else {
                             //Success message

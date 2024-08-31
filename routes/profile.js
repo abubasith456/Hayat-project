@@ -35,7 +35,7 @@ router.post('/', async (req, res) => {
         const user = await User.findOne({ unique_id: userId });
 
         if (!user) {
-            return res.status(404).send(failedResponse('Data not found!'));
+            return res.status(201).send(failedResponse('Data not found!'));
         }
 
         res.status(200).send(profileResponse('Success', 200, user));
@@ -52,7 +52,7 @@ router.get('/userRole', async (req, res) => {
         const user = await User.findOne({ unique_id: userId });
 
         if (!user) {
-            return res.status(404).json({ error: 'User not found' });
+            return res.status(201).json({ error: 'User not found' });
         }
 
         res.json({ role: user.role });

@@ -30,7 +30,7 @@ router.post('/pushToken', async function (req, res) {
                     });
                 });
         } else {
-            res.status(400).send(failedResponse("User not found!"));
+            res.status(201).send(failedResponse("User not found!"));
         }
     } catch (e) {
         res.status(500).send(failedResponse(e));

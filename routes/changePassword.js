@@ -30,7 +30,7 @@ router.post('/', async function (req, res, next) {
             await User.updateOne({ email: user.email }, { $set: updateOps }).exec();
             res.status(200).send(successResponse("Password changed successfully!"));
         } else {
-            res.status(400).send(failedResponse("Email not registered!", 400));
+            res.status(201).send(failedResponse("Email not registered!", 400));
         }
     } catch (err) {
         console.error(err);

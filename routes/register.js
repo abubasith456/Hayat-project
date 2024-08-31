@@ -21,17 +21,17 @@ router.post('/email', async function (req, res) {
     const { email, password, passwordConf, username, dateOfBirth } = req.body;
 
     if (!email || !username || !password || !passwordConf) {
-        return res.status(400).send(failedResponse('Please provide all required information'));
+        return res.status(201).send(failedResponse('Please provide all required information'));
     }
 
     if (password !== passwordConf) {
-        return res.status(400).send(failedResponse('Passwords do not match'));
+        return res.status(201).send(failedResponse('Passwords do not match'));
     }
 
     try {
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).send(failedResponse('Email is already registered'));
+            return res.status(201).send(failedResponse('Email is already registered'));
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -58,17 +58,17 @@ router.post('/mobile', async function (req, res) {
     const { mobileNumber, password, passwordConf, username, dateOfBirth } = req.body;
 
     if (!mobileNumber || !username || !password || !passwordConf) {
-        return res.status(400).send(failedResponse('Please provide all required information'));
+        return res.status(201).send(failedResponse('Please provide all required information'));
     }
 
     if (password !== passwordConf) {
-        return res.status(400).send(failedResponse('Passwords do not match'));
+        return res.status(201).send(failedResponse('Passwords do not match'));
     }
 
     try {
         const existingUser = await User.findOne({ mobileNumber });
         if (existingUser) {
-            return res.status(400).send(failedResponse('Mobile number is already registered'));
+            return res.status(201).send(failedResponse('Mobile number is already registered'));
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -84,7 +84,7 @@ router.post('/mobile', async function (req, res) {
         });
 
         await newUser.save();
-        res.send(profileResponse('Mobile number registration successful.', 200, newUser));
+        res.status(200).send(profileResponse('Mobile number registration successful.', 200, newUser));
     } catch (error) {
         res.status(500).send(failedResponse('Error registering user: ' + error.message));
     }
@@ -116,7 +116,7 @@ router.post('/google', async function (req, res) {
             await user.save();
         }
 
-        res.send(profileResponse('Google registration successful.', 200, user));
+        res.status(200).send(profileResponse('Google registration successful.', 200, user));
     } catch (error) {
         res.status(500).send(failedResponse('Error registering user with Google: ' + error.message));
     }

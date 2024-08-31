@@ -141,7 +141,7 @@ router.put("/:id", async (req, res) => {
                 console.log(e)
             }
         } else {
-            return res.status(400).send(failedResponse(err))
+            return res.status(201).send(failedResponse(err))
         }
     } catch (err) {
         console.log(err);
