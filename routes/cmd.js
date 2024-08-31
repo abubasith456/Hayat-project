@@ -39,57 +39,55 @@ const upload = multer({
 
 router.post('/create', upload.single('file'), async (req, res, next) => {
     console.log(req.body);
-    User.findOne({ unique_id: req.body.userId }, function (err, userData) {
-        if (!userData) {
-            res.send(failedResponse('Data not found!'))
-        } else {
-            console.log(" Data => " + userData)
+    const userData = await User.findOne({ unique_id: req.body.userId }).exec();
+    if (!userData) {
+        res.send(response.failedResponse('Data not found!'))
+    } else {
+        console.log(" Data => " + userData)
 
-            Post.findOne({ _id: req.body.postId }, function (err, postData) {
-                if (!postData) {
-                    res.status(500).json({ error: 'Post not found!' });
-                } else {
-                    var comment = Comment({
-                        user: userData,
-                        post: postData,
-                        userId: req.body.userId,
-                        comment: req.body.comment,
-                        likes: userData
+        Post.findOne({ _id: req.body.postId }, function (err, postData) {
+            if (!postData) {
+                res.status(500).json({ error: 'Post not found!' });
+            } else {
+                var comment = Comment({
+                    user: userData,
+                    post: postData,
+                    userId: req.body.userId,
+                    comment: req.body.comment,
+                    likes: userData
+                })
+
+                comment.save()
+                    .then((post) => {
+                        res.status(200).json(post);
                     })
+                    .catch((error) => {
+                        res.status(500).json({ error: 'An error occurred while creating the post.' });
+                    });
 
-                    comment.save()
-                        .then((post) => {
-                            res.status(200).json(post);
-                        })
-                        .catch((error) => {
-                            res.status(500).json({ error: 'An error occurred while creating the post.' });
-                        });
+            }
 
-                }
-
-            });
-        }
-    });
+        });
+    }
 });
 
 router.get('/:id', async (req, res, next) => {
-    Post.findOne({ _id: req.params.id }, async function (err, postData) {
-        if (!postData) {
-            res.status(500).json({ error: 'Post not found!' });
+    const postData = await Post.findOne({ _id: req.params.id }).exec();
+    if (!postData) {
+        res.status(500).json({ error: 'Post not found!' });
+    } else {
+        const comments = await Comment.find({ post: postData })
+            .sort({ createdAt: 'descending' });
+        if (!comments) {
+            res.status(500).json({ error: 'Comments not found!' });
         } else {
-            const comments = await Comment.find({ post: postData })
-                .sort({ createdAt: 'descending' });
-            if (!comments) {
-                res.status(500).json({ error: 'Comments not found!' });
-            } else {
-                res.status(200).json({
-                    status: 'success',
-                    count: comments.length,
-                    comments,
-                });
-            }
+            res.status(200).json({
+                status: 'success',
+                count: comments.length,
+                comments,
+            });
         }
-    })
+    }
 });
 
 router.get('/byId', async (req, res, next) => {
@@ -162,7 +160,6 @@ router.post('/like', async (req, res, next) => {
 });
 
 router.delete('/:id', async (req, res) => {
-
     Comment.remove({ _id: req.params.id })
         .exec()
         .then(result => {
@@ -171,7 +168,6 @@ router.delete('/:id', async (req, res) => {
         .catch(error => {
             res.send(500).send(response.failedResponse(error))
         });
-
 });
 
 module.exports = router;

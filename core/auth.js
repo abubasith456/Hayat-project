@@ -17,7 +17,7 @@ async function verifyGoogleToken(token) {
         const payload = ticket.getPayload();
 
         // Return the payload with user information
-        return payload;
+        return ticket;
     } catch (error) {
         console.error('Google token verification failed:', error);
         throw new Error('Invalid Google token');

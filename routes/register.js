@@ -99,7 +99,7 @@ router.post('/google', async function (req, res) {
     }
 
     try {
-        const googleUser = await verifyGoogleToken(googleToken);
+        const googleUser = (await verifyGoogleToken(googleToken)).getPayload();
         const { email, name, id } = googleUser;
 
         let user = await User.findOne({ email });

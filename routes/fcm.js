@@ -4,25 +4,13 @@ var FCM = require('fcm-node');
 var serverKey = 'AAAAKXRRooI:APA91bH9pMJziYPRNRI2XyMaSIG_e5a-eJzxMSkaozaCrmCencitDrTul4XyrVAV87K6d-56zGJC49y7Cz6mTRpcxca16QzmF1TF8EW7OmxHPvcQdseHWoD3TIAe62u2gfY0pVXlhJ8Y'
 var fcm = new FCM(serverKey);
 var User = require('../models/user');
-
-function Response(errorCode, message) {
-    return {
-        "status": errorCode,
-        "connection": "Connected",
-        "message": message,
-        "userData": {
-
-        }
-    }
-}
+const { successResponse } = require('../utils/responseModel');
 
 router.post('/pushToken', async function (req, res) {
-
-
     var unique_idValue = req.body.unique_id;
     var pushTokenValue = req.body.pushToken;
-
-    User.findOne({ unique_id: unique_idValue }, function (err, data) {
+    try {
+        const data = await User.findOne({ unique_id: unique_idValue });
         if (data) {
             User.updateOne({
                 unique_id
@@ -33,9 +21,7 @@ router.post('/pushToken', async function (req, res) {
                 }
             }).exec()
                 .then(result => {
-
-                    res.send(Response(200, "Push token updated...."));
-
+                    res.status(200).send(successResponse("Push token updated."));
                 })
                 .catch(err => {
                     console.log(err);
@@ -46,10 +32,9 @@ router.post('/pushToken', async function (req, res) {
         } else {
             res.send(Response(400, "user not found!"));
         }
-    });
+    } catch (e) {
 
-
-
+    }
 });
 
 

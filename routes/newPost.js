@@ -4,7 +4,8 @@ const mongoose = require("mongoose");
 const multer = require('multer');
 const User = require('../models/user');
 const Post = require('../models/newPost');
-const firebase = require("../utils/firebase")
+const firebase = require("../utils/firebase");
+const { successResponse, failedResponse } = require("../utils/responseModel");
 var imageUrl = ""
 
 
@@ -49,12 +50,13 @@ router.post('/create', upload.single('file'), async (req, res, next) => {
         imageUrl = req.file.path
     }
 
-    User.findOne({ unique_id: req.body.userId }, async function (err, data) {
+    try {
+        const data = await User.findOne({ unique_id: req.body.userId });
         if (!data) {
             res.send(failedResponse('Data not found!'))
         } else {
             console.log(" Data => " + data)
-            await Post.create({
+            const newPost = await Post.create({
                 user: data,
                 image: imageUrl,
                 caption: req.caption,
@@ -62,18 +64,15 @@ router.post('/create', upload.single('file'), async (req, res, next) => {
                 likes: data,
                 profile: data,
             }).then(result => {
-                res.status(200).json({
-                    status: 'success',
-                    result,
-                });
+                res.status(200).send(successResponse(newPost));
             }).catch(error => {
-                res.status(500).json({
-                    status: 'failed',
-                    error,
-                });
+                res.status(500).send(failedResponse(error));
             });
         }
-    });
+    } catch (e) {
+
+    }
+
 });
 
 router.get('/', async (req, res, next) => {

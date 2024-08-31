@@ -3,22 +3,7 @@ var router = express.Router();
 var app = express();
 var User = require('../models/user');
 const bcrypt = require("bcrypt");
-
-function successResponse(message) {
-    return {
-        "status": 200,
-        "connection": "Connected",
-        "message": message
-    }
-}
-
-function failedResponse(message) {
-    return {
-        "status": 400,
-        "connection": "Dissconnected",
-        "message": message,
-    }
-}
+const { successResponse, failedResponse } = require('../utils/responseModel');
 
 router.post('/', async function (req, res, next) {
 
@@ -34,37 +19,23 @@ router.post('/', async function (req, res, next) {
         password: password,
         passwordConf: cnfrmNewPassword
     };
-
-    // for (const ops of Object.keys(req.body)) {
-    //     updateOps[ops] = req.body[ops];
-    // }
-
     console.log(updateOps);
+    try {
+        const { email } = req.body;
+        // Find the user by email
+        const user = await User.findOne({ email: email }).exec();
 
-    // if (newPassword == cnfrmNewPassword) {
-
-    User.findOne({ email: req.body.email }, function (err, data) {
-
-        if (data) {
-
-            User.updateOne({ email: data.email }, { $set: updateOps })
-                .exec()
-                .then(result => {
-                    res.send(successResponse("Password changed successfully!")
-                    );
-                })
-                .catch(err => {
-                    console.log(err);
-                    res.status(500).json({
-                        error: err
-                    });
-                });
-
+        if (user) {
+            // Update the user's password
+            await User.updateOne({ email: user.email }, { $set: updateOps }).exec();
+            res.status(200).send(successResponse("Password changed successfully!"));
         } else {
-            res.send(failedResponse("Email not registered!"))
+            res.status(400).send(failedResponse("Email not registered!", 400));
         }
-
-    });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send(failedResponse(err.message, 500));
+    }
 
     // }
     //  else {

@@ -49,6 +49,7 @@ function profileResponse(message, statusCode, data) {
             email: data.email,
             dateOfBirth: data.dateOfBirth,
             mobileNumber: data.mobileNumber,
+            profilePic: data.profilePic
         },
     };
 }
