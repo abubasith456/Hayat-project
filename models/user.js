@@ -89,11 +89,6 @@ const userSchema = new Schema({
 	timestamps: true // This adds `createdAt` and `updatedAt` fields
 });
 
-// Create an index for frequently queried fields to improve performance
-userSchema.index({ email: 1 });
-userSchema.index({ unique_id: 1 });
-userSchema.index({ mobileNumber: 1 });
-
 const User = mongoose.model('User', userSchema);
 
 module.exports = User;

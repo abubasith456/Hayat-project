@@ -5,6 +5,12 @@ var serverKey = 'AAAAKXRRooI:APA91bH9pMJziYPRNRI2XyMaSIG_e5a-eJzxMSkaozaCrmCenci
 var fcm = new FCM(serverKey);
 var User = require('../models/user');
 const { successResponse, failedResponse } = require('../utils/responseModel');
+const admin = require('firebase-admin');
+
+// Initialize the Firebase Admin SDK (replace with your credentials)
+admin.initializeApp({
+    credential: admin.credential.cert(require('../push-notification-key.json'))
+  });
 
 router.post('/pushToken', async function (req, res) {
     var unique_idValue = req.body.unique_id;
@@ -39,39 +45,29 @@ router.post('/pushToken', async function (req, res) {
 
 
 
-router.post('/push', function (req, res) {
+router.post('/push', async (req, res) => {
     try {
-        console.log(req);
+        const deviceToken = req.body.deviceToken;
+        const title = req.body.title;
+        const bodyText = req.body.bodyText;
 
-        var deviceToken = req.body.deviceToken;
-        var title = req.body.title;
-        var bodyText = req.body.bodyText;
-    
-        var message = { //this may vary according to the message type (single recipient, multicast, topic, et cetera)
-            to: deviceToken,
-    
+        const message = {
+            token: deviceToken,
             notification: {
                 title: title,
                 body: bodyText,
             },
-    
-            // data: {  //you can send only notification or only data(or include both)
-            //     my_key: 'my value',
-            //     my_another_key: 'my another value'
-            // }
+            android: {
+                priority: "high",
+            },
         };
 
-        fcm.send(message, function (err, response) {
-            if (err) {
-                res.status(400).send("Something has gone wrong! => " + err);
-                console.log("Something has gone wrong! " + err);
-            } else {
-                console.log();
-                res.status(200).send(response);
-            }
-        });
-    } catch (e) {
-        res.status(500).send(failedResponse(e, 500));
+        // Send message via Firebase Admin SDK
+        const response = await admin.messaging().send(message);
+        res.status(200).send(response);
+    } catch (err) {
+        res.status(400).send("Something has gone wrong! => " + err.message);
+        console.error("Error sending message:", err);
     }
 });
 
