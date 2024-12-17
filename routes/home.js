@@ -8,20 +8,31 @@ const Banner = require("../models/banner")
 const Category = require("../models/category")
 const Order = require("../models/order");
 const Products = require("../models/product");
+const User = require("../models/user");
 
 router.get("/", async (req, res, next) => {
     try {
+        const userId = req.query.id;
+        console.log("UserId -> ", userId);
         const bannersList = await Banner.find();
         const categoryList = await Category.find();
-        const ordersList = {}
+        let userData = {}
+        let ordersList = {}
         try {
-            ordersList = await Order.find({ unique_id: req.params.id });
+            ordersList = await Order.find({ unique_id: userId });
+            const tempData = await User.findOne({ unique_id: userId });
+            userData = tempData.toObject();
+            delete userData.passwordConf;
+            delete userData.password;
+            delete userData.pushToken;
+            console.log(userData);
         } catch (err) {
             console.log(err)
         }
         const productsList = await Products.find();
 
         const response = {
+            user: userData,
             banner: bannersList,
             categories: categoryList,
             recentPurchase: ordersList,
