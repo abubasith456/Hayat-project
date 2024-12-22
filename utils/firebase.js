@@ -48,9 +48,48 @@ async function generateSignedUrl(filename) {
     return url
 };
 
+async function uploadAvatar(filepath, userId) {
+    const imageName = `${userId}_profile.jpg`;
+    // Check file exists
+    const file = bucket.file(`ProfilePictures/${imageName}`);
+    const [exists] = await file.exists();
+
+    if (exists) {
+        console.log(`File with name ${file.name} already exists. Deleting it...`);
+        await file.delete();
+        console.log(`File ${file.name} deleted successfully.`);
+    }
+
+    // Upload file to Firebase Storage
+    await bucket.upload(filepath, {
+        gzip: true,
+        destination: `ProfilePictures/${imageName}`,
+        metadata: {
+            cacheControl: 'public, max-age=31536000',
+        },
+    });
+
+    console.log(`${imageName} uploaded successfully.`);
+
+    if (!exists) {
+        throw new Error(`File does not exist after upload: ${imageName}`);
+    }
+
+    // Generate signed URL
+    const [url] = await file.getSignedUrl({
+        action: 'read',
+        expires: '03-01-2030',
+    });
+
+    console.log('Generated URL:', url);
+    return url;
+}
+
+
 module.exports = {
     admin,
     bucket,
     uploadFile,
-    generateSignedUrl
+    generateSignedUrl,
+    uploadAvatar
 }

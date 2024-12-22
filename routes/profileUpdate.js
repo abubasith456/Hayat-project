@@ -68,13 +68,12 @@ router.post('/', upload.single('file'), async (req, res) => {
         }
 
         const { avatar, imageName, filePath } = imageJSON
-        const fileName = imageJSON.imageName
         if (avatar && !avatar.includes("https://storage.googleapis.com")) {
             // Upload the file to Firebase Storage
-            await firebase.uploadFile(filePath, "ProfilePictures/" + imageName);
+            //await firebase.uploadFile(filePath, "ProfilePictures/" + imageName);
 
             // Generate a signed URL for the uploaded file
-            const imageUrl = await firebase.generateSignedUrl("ProfilePictures/" + imageName);
+            const imageUrl = await firebase.uploadAvatar(filePath, req.body.userId);
 
             // Update profilePic only if imageUrl is not empty
             if (imageUrl) {
