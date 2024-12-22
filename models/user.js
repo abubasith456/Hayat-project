@@ -10,10 +10,11 @@ const userSchema = new Schema({
 	email: {
 		type: String,
 		unique: true,
-		sparse: true,  // Indexing only if present
+		sparse: true, // Index only if present
 		validate: {
 			validator: function (value) {
-				return !this.mobileNumber || (this.mobileNumber && !value); // Either mobileNumber is empty or both fields are empty
+				// Validate during creation/updation that mobileNumber is empty if email is provided
+				return !(value && this.mobileNumber);
 			},
 			message: 'Mobile number must be empty if email is provided.'
 		}
@@ -28,10 +29,11 @@ const userSchema = new Schema({
 	mobileNumber: {
 		type: String,
 		unique: true,
-		sparse: true,  // Indexing only if present
+		sparse: true, // Index only if present
 		validate: {
 			validator: function (value) {
-				return !this.email || (this.email && !value); // Either email is empty or both fields are empty
+				// Validate during creation/updation that email is empty if mobileNumber is provided
+				return !(value && this.email);
 			},
 			message: 'Email must be empty if mobile number is provided.'
 		}
@@ -48,7 +50,7 @@ const userSchema = new Schema({
 	},
 	role: {
 		type: String,
-		enum: ['user', 'admin'],
+		enum: ['user', 'admin','customer'],
 		default: 'user'
 	},
 	googleId: {
