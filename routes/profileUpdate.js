@@ -54,15 +54,17 @@ const upload = multer({
 //Update profile and watch
 router.post('/', upload.single('file'), async (req, res) => {
     try {
+
         const user = await User.findOne({ unique_id: req.body.userId });
 
         if (!user) {
-            return res.send(failedResponse('User not found!'));
+            return resres.status(404).send(failedResponse('User not found!'));
         }
 
-        if (req.file) {
+        const file = req.file
+        if (file && !file.includes("https://storage.googleapis.com")) {
             // Upload the file to Firebase Storage
-            await firebase.uploadFile(req.file.path, "ProfilePictures/" + req.file.filename);
+            await firebase.uploadFile(file.path, "ProfilePictures/" + file.filename);
 
             // Generate a signed URL for the uploaded file
             const imageUrl = await firebase.generateSignedUrl("ProfilePictures/" + req.file.filename);
@@ -81,16 +83,20 @@ router.post('/', upload.single('file'), async (req, res) => {
         if (req.body.dateOfBirth) {
             user.dateOfBirth = req.body.dateOfBirth;
         }
+
+        // Update email or mobile number based on the request body
         if (req.body.mobileNumber) {
             user.mobileNumber = req.body.mobileNumber;
+        } else if (req.body.email) {
+            user.email = req.body.email;
         }
 
-        await user.save();
+        const savedData = await user.save();
         console.log('Profile updated successfully');
-        res.send(successResponse('Profile updated!', { profileUrl: user.profilePic }));
+        res.send(successResponse('Profile updated!', savedData));
     } catch (error) {
         console.error('Error updating profile:', error);
-        res.send(failedResponse(error));
+        res.status(400).send(failedResponse(error));
     }
 });
 

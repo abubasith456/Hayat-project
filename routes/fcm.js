@@ -5,12 +5,13 @@ var serverKey = 'AAAAKXRRooI:APA91bH9pMJziYPRNRI2XyMaSIG_e5a-eJzxMSkaozaCrmCenci
 var fcm = new FCM(serverKey);
 var User = require('../models/user');
 const { successResponse, failedResponse } = require('../utils/responseModel');
-const admin = require('firebase-admin');
+// const admin = require('firebase-admin');
+const admin = require("../utils/firebase")
 
 // Initialize the Firebase Admin SDK (replace with your credentials)
-admin.initializeApp({
-    credential: admin.credential.cert(require('../push-notification-key.json'))
-  });
+// admin.initializeApp({
+//     credential: admin.credential.cert(require('../push-notification-key.json'))
+//   });
 
 router.post('/pushToken', async function (req, res) {
     var unique_idValue = req.body.unique_id;

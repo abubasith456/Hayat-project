@@ -10,15 +10,19 @@ const userSchema = new Schema({
 	email: {
 		type: String,
 		unique: true,
-		sparse: true, // Index only if present
+		sparse: true,  // Indexing only if present
 		validate: {
 			validator: function (value) {
-				// Validate during creation/updation that mobileNumber is empty if email is provided
-				return !(value && this.mobileNumber);
+				// Validate only if the email field is updated
+				if (this.isModified('email') && value) {
+					return !this.mobileNumber;
+				}
+				return true;
 			},
 			message: 'Mobile number must be empty if email is provided.'
 		}
 	},
+
 	username: {
 		type: String,
 		required: true
@@ -29,11 +33,14 @@ const userSchema = new Schema({
 	mobileNumber: {
 		type: String,
 		unique: true,
-		sparse: true, // Index only if present
+		sparse: true,  // Indexing only if present
 		validate: {
 			validator: function (value) {
-				// Validate during creation/updation that email is empty if mobileNumber is provided
-				return !(value && this.email);
+				// Validate only if the mobileNumber field is updated
+				if (this.isModified('mobileNumber') && value) {
+					return !this.email;
+				}
+				return true;
 			},
 			message: 'Email must be empty if mobile number is provided.'
 		}
@@ -50,7 +57,7 @@ const userSchema = new Schema({
 	},
 	role: {
 		type: String,
-		enum: ['user', 'admin','customer'],
+		enum: ['user', 'admin', 'customer'],
 		default: 'user'
 	},
 	googleId: {
@@ -90,6 +97,21 @@ const userSchema = new Schema({
 }, {
 	timestamps: true // This adds `createdAt` and `updatedAt` fields
 });
+
+// Pre-update hook to ensure validation happens only when email or mobileNumber are updated
+// userSchema.pre('findOneAndUpdate', function (next) {
+// 	const update = this.getUpdate();
+// 	const user = this._conditions;
+
+// 	// Check if email and mobileNumber are both in the update query
+// 	if (update.email && update.mobileNumber) {
+// 		const error = new Error('Email and mobile number cannot both be provided.');
+// 		return next(error);  // Return error if both fields are set
+// 	}
+
+// 	// Proceed with the update
+// 	next();
+// });
 
 const User = mongoose.model('User', userSchema);
 
