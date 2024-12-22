@@ -11,15 +11,28 @@ const date = new Date(d.setFullYear(d.getFullYear() + 200)).toString()
 async function uploadFile(filepath, filename) {
     console.log("File path =>" + filepath)
     console.log("File name =>" + filename)
-    await bucket.upload(filepath, {
-        gzip: true,
-        destination: filename,
-        metadata: {
-            cacheControl: 'public, max-age=31536000'
-        }
-    });
+    try {
+        const file = bucket.file(filename);
+        const [exists] = await file.exists();
 
-    console.log(`${filename} uploaded to bucket.`);
+        if (exists) {
+            console.log(`File with name ${filename} already exists. Deleting it...`);
+            await file.delete();
+            console.log(`File ${filename} deleted successfully.`);
+        }
+
+        await bucket.upload(filepath, {
+            gzip: true,
+            destination: filename,
+            metadata: {
+                cacheControl: 'public, max-age=31536000'
+            }
+        });
+
+        console.log(`${filename} uploaded to bucket.`);
+    } catch (e) {
+        console.log("Error: ", e);
+    }
 }
 
 async function generateSignedUrl(filename) {

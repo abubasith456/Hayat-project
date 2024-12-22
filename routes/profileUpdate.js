@@ -54,6 +54,12 @@ const upload = multer({
 //Update profile and watch
 router.post('/', upload.single('file'), async (req, res) => {
     try {
+        console.log("File", req.body);
+        const formData = await req.body;
+        var imageJSON = await JSON.parse(formData.file);
+
+        console.log("userJSON", imageJSON);
+
 
         const user = await User.findOne({ unique_id: req.body.userId });
 
@@ -61,13 +67,14 @@ router.post('/', upload.single('file'), async (req, res) => {
             return resres.status(404).send(failedResponse('User not found!'));
         }
 
-        const file = req.file
-        if (file && !file.includes("https://storage.googleapis.com")) {
+        const { avatar, imageName, filePath } = imageJSON
+        const fileName = imageJSON.imageName
+        if (avatar && !avatar.includes("https://storage.googleapis.com")) {
             // Upload the file to Firebase Storage
-            await firebase.uploadFile(file.path, "ProfilePictures/" + file.filename);
+            await firebase.uploadFile(filePath, "ProfilePictures/" + imageName);
 
             // Generate a signed URL for the uploaded file
-            const imageUrl = await firebase.generateSignedUrl("ProfilePictures/" + req.file.filename);
+            const imageUrl = await firebase.generateSignedUrl("ProfilePictures/" + imageName);
 
             // Update profilePic only if imageUrl is not empty
             if (imageUrl) {
@@ -92,8 +99,8 @@ router.post('/', upload.single('file'), async (req, res) => {
         }
 
         const savedData = await user.save();
-        console.log('Profile updated successfully');
-        res.send(successResponse('Profile updated!', savedData));
+        console.log('Profile updated successfully', savedData);
+        res.status(200).send(successResponse('Profile updated!', savedData));
     } catch (error) {
         console.error('Error updating profile:', error);
         res.status(400).send(failedResponse(error));
