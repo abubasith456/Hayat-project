@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-var Banner = require('../models/banner');
+var Banner = require('../Database/models/banner');
 const mongoose = require("mongoose");
 
 const firebase = require("../utils/firebase")

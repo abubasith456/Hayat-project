@@ -2,13 +2,13 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require('multer');
-const DriedNoodles = require("../models/DriedNoodles")
+const DriedNoodles = require("../Database/models/DriedNoodles")
 const { responseAddProduct, responseFetchProduct } = require("../utils/responseModel");
-const Banner = require("../models/banner")
-const Category = require("../models/category")
-const Order = require("../models/order");
-const Products = require("../models/product");
-const User = require("../models/user");
+const Banner = require("../Database/models/banner")
+const Category = require("../Database/models/category")
+const Order = require("../Database/models/order");
+const Products = require("../Database/models/product");
+const User = require("../Database/models/user");
 
 router.get("/", async (req, res, next) => {
     try {

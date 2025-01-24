@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/user');
+const User = require('../Database/models/user');
 
 // Utility functions for responses
 function successResponse(message) {

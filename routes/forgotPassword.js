@@ -3,7 +3,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const exphbs = require('express-handlebars');
 var nodemailer = require('nodemailer');
-var User = require('../models/user');
+var User = require('../Database/models/user');
 const { successResponse, failedResponse } = require("../utils/responseModel");
 
 var otp = Math.random();

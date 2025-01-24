@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 var axios = require('axios');
-const Order = require("../models/order");
-const Product = require("../models/product");
-var User = require('../models/user');
+const Order = require("../Database/models/order");
+const Product = require("../Database/models/product");
+var User = require('../Database/models/user');
 const pushApi = "https://fcm.googleapis.com/fcm/send";
 const { responseAddProduct, responseFetchProduct, failedResponse, successResponse } = require("../utils/responseModel");
 

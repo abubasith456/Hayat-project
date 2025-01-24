@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require('multer');
-const User = require('../models/user');
-const Post = require('../models/newPost');
-const Comment = require('../models/comments');
+const User = require('../Database/models/user');
+const Post = require('../Database/models/newPost');
+const Comment = require('../Database/models/comments');
 const response = require('../utils/responseModel');
 
 

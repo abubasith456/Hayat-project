@@ -1,4 +1,4 @@
-const Category = require("../models/category");
+const Category = require("../Database/models/category");
 const express = require("express");
 const { responseAddProduct, responseFetchProduct } = require("../utils/responseModel");
 const router = express.Router();

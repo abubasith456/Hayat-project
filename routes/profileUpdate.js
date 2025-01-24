@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var User = require('../models/user');
+var User = require('../Database/models/user');
 const multer = require('multer');
 const firebase = require("../utils/firebase")
 var imageUrl = ""

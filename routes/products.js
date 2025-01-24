@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require('multer');
-const Product = require("../models/product");
-const { Category } = require("../models/category");
+const Product = require("../Database/models/product");
+const { Category } = require("../Database/models/category");
 
 const firebase = require("../utils/firebase")
 var imageUrl = ""

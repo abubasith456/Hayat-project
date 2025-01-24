@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const multer = require('multer');
 const { responseAddProduct, responseFetchProduct } = require("../utils/responseModel");
 const firebase = require("../utils/firebase");
-const BabyItems = require("../models/BabyItems");
+const BabyItems = require("../Database/models/BabyItems");
 var imageUrl = ""
 
 //Disk storage where image store

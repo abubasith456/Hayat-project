@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var app = express();
-var User = require('../models/user');
+var User = require('../Database/models/user');
 const bcrypt = require("bcrypt");
 const { successResponse, failedResponse } = require('../utils/responseModel');
 

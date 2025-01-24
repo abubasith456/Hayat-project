@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const multer = require('multer');
-const Vegetables = require("../models/vegitables");
+const Vegetables = require("../Database/models/vegitables");
 const { responseAddProduct, responseFetchProduct } = require("../utils/responseModel");
 
 const firebase = require("../utils/firebase")

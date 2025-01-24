@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
-const Address = require("../models/address");
+const Address = require("../Database/models/address");
 
 function successResponse(message) {
     return {

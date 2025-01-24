@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var User = require('../models/user');
+var User = require('../Database/models/user');
 const bcrypt = require("bcrypt");
 const { profileResponse, failedResponse, successResponse } = require('../utils/responseModel');
 const verifyGoogleToken = require('../core/auth');
