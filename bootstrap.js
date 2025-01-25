@@ -1,4 +1,4 @@
-const {AppError} = require("./utils/AppError.js");
+const { AppError } = require("./utils/AppError.js");
 const globalErrorHandling = require("./utils/GlobalErrorHandling.js");
 
 // Routes
@@ -28,6 +28,10 @@ const driedNoodles = require("./routes/driedNoodles");
 const home = require("./routes/home");
 const babyItems = require("./routes/babyItems");
 
+const hijabRouter = require("./routes/musfiRouters/hijabs/hijabsRouter.js");
+const featureRoute = require("./routes/musfiRouters/featureProducts/featureProductsRouter.js");
+const scarfsRouter = require("./routes/musfiRouters/scarfs/scarfsRouter.js");
+
 function bootstrap(app) {
     app.use("/api/v1/login", login);
     app.use("/api/v1/register", register);
@@ -54,6 +58,10 @@ function bootstrap(app) {
     app.use("/api/v1/post", post);
     app.use("/api/v1/newPost", newPost);
     app.use("/api/v1/comment", comment);
+
+    app.use("/api/v1/hijabs", hijabRouter);
+    app.use("/api/v1/featureProducts", featureRoute)
+    app.use("/api/v1/scarfs", scarfsRouter)
 
     // Catch-all for undefined routes
     app.all("*", (req, res, next) => {

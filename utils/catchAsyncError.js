@@ -1,5 +1,8 @@
-export let catchAsyncError = (fn) => {
+ let catchAsyncError = (fn) => {
   return (req, res, next) => {
     fn(req, res, next).catch((err) => next(err));
   };
 };
+
+module.exports = catchAsyncError;
+

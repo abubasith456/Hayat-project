@@ -8,20 +8,28 @@ const bannerScheme = mongoose.Schema({
     percentage: {
         type: String,
     },
+    image: {
+        type: String
+    },
     products: [
         {
-            productId: {
-                type: String,
-            },
-            productName: {
-                type: String,
-            },
-            productImage: {
+            _id: mongoose.Schema.Types.ObjectId,
+            name: {
                 type: String,
             },
             price: {
+                type: Number,
+            },
+            description: {
                 type: String,
             },
+            image: {
+                type: String,
+            },
+            isLiked: {
+                type: Boolean,
+                default: false,
+            }
         },
     ],
 });

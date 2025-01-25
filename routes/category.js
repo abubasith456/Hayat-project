@@ -63,8 +63,8 @@ router.get("/:id", async (req, res) => {
 //Add
 router.post("/", upload.single('file'), async (req, res) => {
 
-    await firebase.uploadFile(req.file.path, "Category/" + req.file.filename)
-    await firebase.generateSignedUrl(req.file.filename).then(res => {
+    await firebase.uploadFile(req.file.path, "hijab/" + req.file.filename)
+    await firebase.generateSignedUrl("hijab/" + req.file.filename).then(res => {
         imageUrl = res
     })
 

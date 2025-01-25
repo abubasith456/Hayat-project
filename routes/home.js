@@ -9,6 +9,7 @@ const Category = require("../Database/models/category")
 const Order = require("../Database/models/order");
 const Products = require("../Database/models/product");
 const User = require("../Database/models/user");
+const featureProduct = require("../Database/mufiModels/featureProduct");
 
 router.get("/", async (req, res, next) => {
     try {
@@ -29,14 +30,16 @@ router.get("/", async (req, res, next) => {
         } catch (err) {
             console.log(err)
         }
+
+        const featureProductList = await featureProduct.find()
         const productsList = await Products.find();
 
         const response = {
             user: userData,
             banner: bannersList,
             categories: categoryList,
-            recentPurchase: ordersList,
-            products: productsList
+            // recentPurchase: ordersList,
+            products: featureProductList ?? productsList
         }
 
         res.status(200).send(responseFetchProduct(true, response))
